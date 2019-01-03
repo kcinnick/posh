@@ -74,10 +74,11 @@ class ProductSearch:
              'sex': '-',
              'category': '-',
              'subcategory': '-',
-             'color': 'color-',
-             'size': 'size-',
+             'color': '-color-',
+             'size': '-size-',
              'sort': '?sort_by=',
-             'type': '-'}
+             'type': '&condition=',
+             'price': '&price%5B%5D='}
         )
         for argument, value in possible_arguments.items():
             if arguments.get(argument):
