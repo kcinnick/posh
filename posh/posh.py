@@ -7,6 +7,11 @@ import requests
 
 
 class Product:
+    """
+    An individual product on Poshmark. Can currently be built
+    from either a search or (TODO instantiated with a URL directly.)
+    """
+
     def __init__(self, url, posted_at=None, owner=None, brand=None,
                  price=None, size=None, listing_id=None, title=None):
         self.url = url
@@ -19,6 +24,10 @@ class Product:
         self.title = title
 
     def _build_product_from_tile(self, tile):
+        """
+        Builds products from tiles, i.e. returned search results.
+        """
+
         self.posted_at = tile['data-created-at']
         self.owner = tile['data-creator-handle']
         self.brand = tile['data-post-brand']
@@ -29,21 +38,22 @@ class Product:
 
 
 class ProductSearch:
-    def __init__(self, sex=None, category=None, sizes=None, colors=None,
-                 prices=None, subcategory=None, condition=None,
-                 availability=None):
+    """
+    May change substantially in future versions. Currently,
+    handles one search and it's results.
+    """
+
+    def __init__(self):
         self.session = requests.Session()
         self.set_headers()
-        self.category = category
-        self.sizes = sizes
-        self.colors = colors
-        self.prices = prices
-        self.subcategory = subcategory
-        self.condition = condition
-        self.availability = availability
         self.results = []
 
     def set_headers(self, headers=None):
+        """
+        If provided, sets headers. Otherwise,
+        sets User-Agent to "Posh"
+        """
+
         if not headers:
             headers = {'User-Agent': 'Posh'}
 
@@ -52,6 +62,12 @@ class ProductSearch:
         return
 
     def _build_request(self, arguments: dict):
+        """
+        May change substantially in future versions.
+        Currently creates the string for a search given
+        a dict with at least one possible_argument.
+        """
+
         string = 'https://poshmark.com/'
         possible_arguments = OrderedDict(
             {'brand': 'brand/',
@@ -71,6 +87,12 @@ class ProductSearch:
         return string
 
     def execute_search(self, request_str, page_number=None, items=None):
+        """
+        Given a request_str, executes the associated search.
+        Gathers results, turns their HTML into Product objects,
+        then adds them to the ProductSearch object's results attr.
+        """
+
         if page_number:
             request_str += f'&max_id={page_number}'
 
