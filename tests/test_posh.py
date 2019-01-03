@@ -9,7 +9,7 @@ from collections import OrderedDict
 
 from random import random
 
-from posh.posh import ProductSearch
+from posh.posh import ProductSearch, Product
 
 
 product_search = ProductSearch()
@@ -68,3 +68,9 @@ def test_execute_search():
         product_search.execute_search(test_string, page_number=2)
         assert len(product_search.results) == 48
         product_search.results = []
+
+
+def test_build_product_from_url():
+    product = Product(url='invalid_url')
+    with pytest.raises(NotImplementedError):
+        product._build_product_from_url(product_search.session)

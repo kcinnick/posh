@@ -4,16 +4,22 @@
 from bs4 import BeautifulSoup
 from collections import OrderedDict
 import requests
-
+import pytest
 
 class Product:
     """
     An individual product on Poshmark. Can currently be built
     from either a search or (TODO instantiated with a URL directly.)
+    Some attributes can only be gathered via search, while some can
+    only be gathered via URL.  A product's full information can be
+    gathered when the product originates from a search, but not
+    when the product originates from a supplied URL.
     """
 
-    def __init__(self, url, posted_at=None, owner=None, brand=None,
-                 price=None, size=None, listing_id=None, title=None):
+    def __init__(self, url, posted_at=None, owner=None,
+                 brand=None, price=None, size=None, listing_id=None,
+                 title=None, pictures=None, updated_at=None, description=None,
+                 colors=None, comments=None):
         self.url = url
         self.posted_at = posted_at
         self.owner = owner
@@ -22,6 +28,14 @@ class Product:
         self.size = size
         self.listing_id = listing_id
         self.title = title
+        self.pictures = pictures
+
+        # The following attributes are only available if built from URL.
+
+        self.updated_at = updated_at
+        self.description = description
+        self.colors = colors
+        self.comments = comments
 
     def _build_product_from_tile(self, tile):
         """
@@ -35,6 +49,11 @@ class Product:
         self.size = tile['data-post-size']
         self.listing_id = tile['id']
         self.title = tile.find('a')['title']
+
+    @pytest.mark.skip(reason="Not implemented yet.")
+    def _build_product_from_url(self, session):
+        # TODO
+        raise NotImplementedError
 
 
 class ProductSearch:
