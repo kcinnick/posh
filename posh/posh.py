@@ -48,19 +48,6 @@ class ProductSearch:
         self.set_headers()
         self.results = []
 
-    def set_headers(self, headers=None):
-        """
-        If provided, sets headers. Otherwise,
-        sets User-Agent to "Posh"
-        """
-
-        if not headers:
-            headers = {'User-Agent': 'Posh'}
-
-        self.session.headers.update(headers)
-
-        return
-
     def _build_request(self, arguments: dict):
         """
         May change substantially in future versions.
@@ -86,6 +73,19 @@ class ProductSearch:
                 string += addition
 
         return string
+
+    def set_headers(self, headers=None):
+        """
+        If provided, sets headers. Otherwise,
+        sets User-Agent to "Posh"
+        """
+
+        if not headers:
+            headers = {'User-Agent': 'Posh'}
+
+        self.session.headers.update(headers)
+
+        return
 
     def execute_search(self, request_str, page_number=None, items=None):
         """
