@@ -53,7 +53,17 @@ class Product:
     @pytest.mark.skip(reason="Not implemented yet.")
     def _build_product_from_url(self, session):
         # TODO
-        raise NotImplementedError
+        soup = BeautifulSoup(session.get(self.url).content, 'lxml')
+        self.posted_at = 'Products built from URL don\'t have this attr.'
+        self.owner = soup.find('div', class_='handle').text[1:]
+        self.brand = soup.find('meta', attrs={'property': 'poshmark:brand'}
+            ).get('content')
+        self.price = soup.find('meta', attrs={'property': 'poshmark:price'}
+            ).get('content')
+        self.size = soup.find('span', attrs={'id': 'pixel-listing-view'}
+            ).get('data-post-size')
+        self.listing_id = self.url.split('-')[-1]
+        self.title = soup.find('h1', class_='title').text
 
 
 class ProductSearch:
