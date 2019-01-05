@@ -78,6 +78,14 @@ class ProductSearch:
         self.set_headers()
         self.results = []
 
+    def _format_argument(self, argument, value, addition):
+        if argument == 'subcategory':
+            addition = addition.replace(' ', '_')
+        elif argument == 'brand':
+            addition = addition.replace(' ', '_')
+        return addition
+
+
     def _build_request(self, arguments: dict):
         """
         May change substantially in future versions.
@@ -92,14 +100,17 @@ class ProductSearch:
              'category': '-',
              'subcategory': '-',
              'color': '-color-',
-             'size': '-size-',
              'sort': '?sort_by=',
+             'size': '&size%5B%5D=',
              'type': '&condition=',
              'price': '&price%5B%5D='}
         )
         for argument, value in possible_arguments.items():
-            if arguments.get(argument):
+            if argument == 'sort' and not arguments.get(argument):
+                string += possible_arguments['sort'] + 'added_desc'
+            elif arguments.get(argument):
                 addition = possible_arguments[argument] + arguments[argument]
+                addition = self._format_argument(argument, value, addition)
                 string += addition
 
         return string
@@ -128,6 +139,7 @@ class ProductSearch:
             request_str += f'&max_id={page_number}'
 
         r = self.session.get(request_str)
+
         soup = BeautifulSoup(r.content, 'lxml')
         tiles = soup.find_all('div', class_='tile')
         for tile in tiles:
@@ -137,3 +149,12 @@ class ProductSearch:
             self.results.append(p)
 
         return
+
+    def search_multiple_pages(self, pages, arguments):
+        request_str = self._build_request(arguments)
+        for page in range(1, pages + 1):
+            old_results_len = len(self.results)
+            self.execute_search(request_str, str(page), self.results)
+            new_results_len = len(self.results)
+            if new_results_len == old_results_len:
+                return

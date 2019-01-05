@@ -38,9 +38,7 @@ def test_build_request():
         possible_arguments = dict(sorted(possible_arguments.items(),
                                          key=lambda x: random()))
         test_string = product_search._build_request(possible_arguments)
-        assert test_string == 'https://poshmark.com/brand/LuLaRoe-Women-D' +\
-            'resses-Mini-color-Black-size-M?sort_by=add' + \
-            'ed_desc&condition=closet&price%5B%5D=26-50'
+        assert test_string == 'https://poshmark.com/brand/LuLaRoe-Women-Dresses-Mini-color-Black?sort_by=added_desc&size%5B%5D=M&condition=closet&price%5B%5D=26-50'
 
 
 def test_execute_search():
@@ -62,12 +60,14 @@ def test_execute_search():
         possible_arguments = dict(sorted(possible_arguments.items(),
                                          key=lambda x: random()))
         test_string = product_search._build_request(possible_arguments)
-        assert test_string == 'https://poshmark.com/brand/LuLaRoe-Women-D' +\
-            'resses-Mini-color-Black-size-M?sort_by=add' + \
-            'ed_desc&condition=closet&price%5B%5D=26-50'
-        product_search.execute_search(test_string, page_number=2)
-        assert len(product_search.results) == 48
+        assert test_string == 'https://poshmark.com/brand/LuLaRoe-Wo' + \
+            'men-Dresses-Mini-color-Black?sort_by=added_desc' + \
+            '&size%5B%5D=M&condition=closet&price%5B%5D=26-50'
+        product_search.execute_search(test_string, page_number=1)
+        assert len(product_search.results) == 15
         product_search.results = []
+    product_search.execute_search(test_string, page_number=25)
+    assert len(product_search.results) == 0
 
 
 def test_build_product_from_url():
@@ -78,3 +78,15 @@ def test_build_product_from_url():
     assert product.brand == 'LuLaRoe'
     assert product.price == 35.0
     assert product.size == ['S']
+
+
+def test_search_multiple_pages():
+    product_search.search_multiple_pages(50, arguments={
+        'brand': 'Vera Bradley',
+        'size': 'OS',
+        'sex': 'Women',
+        'category': 'Bags',
+        'subcategory': 'Laptop Bags',
+        'color': 'Pink'
+    })
+    assert len(product_search.results) == 549
