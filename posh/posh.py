@@ -6,6 +6,7 @@ from collections import OrderedDict
 import requests
 import pytest
 
+
 class Product:
     """
     An individual product on Poshmark. Can currently be built
@@ -50,18 +51,18 @@ class Product:
         self.listing_id = tile['id']
         self.title = tile.find('a')['title']
 
-    @pytest.mark.skip(reason="Not implemented yet.")
     def _build_product_from_url(self, session):
         # TODO
         soup = BeautifulSoup(session.get(self.url).content, 'lxml')
         self.posted_at = 'Products built from URL don\'t have this attr.'
         self.owner = soup.find('div', class_='handle').text[1:]
         self.brand = soup.find('meta', attrs={'property': 'poshmark:brand'}
-            ).get('content')
-        self.price = soup.find('meta', attrs={'property': 'poshmark:price'}
-            ).get('content')
-        self.size = soup.find('span', attrs={'id': 'pixel-listing-view'}
-            ).get('data-post-size')
+                               ).get('content')
+        self.price = float(soup.find('meta',
+                                     attrs={'property': 'poshmark:price'}
+                                     ).get('content'))
+        self.size = [i.text.strip() for i in
+                     soup.find('div', class_='size-con').find_all('label')]
         self.listing_id = self.url.split('-')[-1]
         self.title = soup.find('h1', class_='title').text
 

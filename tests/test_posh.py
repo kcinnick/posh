@@ -71,6 +71,10 @@ def test_execute_search():
 
 
 def test_build_product_from_url():
-    product = Product(url='invalid_url')
-    with pytest.raises(NotImplementedError):
-        product._build_product_from_url(product_search.session)
+    product = Product(url='https://poshmark.com/listing/Lularo' +
+                      'e-Carly-5c2d86fcbaebf68a9b6893b0')
+    product._build_product_from_url(product_search.session)
+    assert product.owner == 'cmunger81'
+    assert product.brand == 'LuLaRoe'
+    assert product.price == 35.0
+    assert product.size == ['S']
