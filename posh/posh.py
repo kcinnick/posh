@@ -19,8 +19,8 @@ class Product:
 
     def __init__(self, url, posted_at=None, owner=None,
                  brand=None, price=None, size=None, listing_id=None,
-                 title=None, pictures=None, updated_at=None, description=None,
-                 colors=None, comments=None):
+                 title=None, pictures=None, updated_at=None,
+                 description=None, colors=None, comments=None):
         self.url = url
         self.posted_at = posted_at
         self.owner = owner
@@ -38,10 +38,17 @@ class Product:
         self.colors = colors
         self.comments = comments
 
+        self._built_from = None
+
+    def _prepare_for_db_insert(self):
+        if self._built_from == 'tile':
+            self.update('url')
+
     def _build_product_from_tile(self, tile):
         """
         Builds products from tiles, i.e. returned search results.
         """
+        self._built_from = 'tile'
 
         self.posted_at = tile['data-created-at']
         self.owner = tile['data-creator-handle']
@@ -53,6 +60,8 @@ class Product:
 
     def _build_product_from_url(self, session):
         # TODO
+        self._built_from = 'url'
+
         soup = BeautifulSoup(session.get(self.url).content, 'lxml')
         self.posted_at = 'Products built from URL don\'t have this attr.'
         self.owner = soup.find('div', class_='handle').text[1:]
@@ -65,6 +74,10 @@ class Product:
                      soup.find('div', class_='size-con').find_all('label')]
         self.listing_id = self.url.split('-')[-1]
         self.title = soup.find('h1', class_='title').text
+
+    def update(self, session, built_from='tile'):
+        if built_from == 'tile':
+            self._build_product_from_url(self.url, session)
 
 
 class ProductSearch:
@@ -84,7 +97,6 @@ class ProductSearch:
         elif argument == 'brand':
             addition = addition.replace(' ', '_')
         return addition
-
 
     def _build_request(self, arguments: dict):
         """
