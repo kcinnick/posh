@@ -3,8 +3,33 @@
 """Main module."""
 from bs4 import BeautifulSoup
 from collections import OrderedDict
+import datetime
+from dateutil.relativedelta import relativedelta
 import requests
 import pytest
+
+
+def get_past_date(str_days_ago):
+    """
+    str_days_ago: str "Updated 3 minutes ago"
+    """
+
+    today = datetime.datetime.today()
+    split_str = str_days_ago.split()
+
+    if 'minute' in split_str[2]:
+        return datetime.datetime.now() - \
+            datetime.timedelta(minutes=int(split_str[1]))
+
+    if 'hour' in split_str[2]:
+        date = datetime.datetime.now() - relativedelta(hours=int(split_str[1]))
+        return date
+
+    if 'day' in split_str[2]:
+        date = today - relativedelta(days=int(split_str[1]))
+        return date
+
+    raise ValueError("Wrong argument format.")
 
 
 class Product:
@@ -59,11 +84,11 @@ class Product:
         self.title = tile.find('a')['title']
 
     def _build_product_from_url(self, session):
-        # TODO
+
         self._built_from = 'url'
 
         soup = BeautifulSoup(session.get(self.url).content, 'lxml')
-        self.posted_at = 'Products built from URL don\'t have this attr.'
+
         self.owner = soup.find('div', class_='handle').text[1:]
         self.brand = soup.find('meta', attrs={'property': 'poshmark:brand'}
                                ).get('content')
@@ -74,10 +99,12 @@ class Product:
                      soup.find('div', class_='size-con').find_all('label')]
         self.listing_id = self.url.split('-')[-1]
         self.title = soup.find('h1', class_='title').text
+        updated_at = soup.find('span', class_='time').text
+        self.updated_at = get_past_date(updated_at)
 
     def update(self, session, built_from='tile'):
         if built_from == 'tile':
-            self._build_product_from_url(self.url, session)
+            self._build_product_from_url(session)
 
 
 class ProductSearch:
