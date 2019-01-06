@@ -6,10 +6,11 @@
 import pytest
 
 from collections import OrderedDict
+import datetime
 
 from random import random
 
-from posh.posh import ProductSearch, Product
+from posh.posh import ProductSearch, Product, get_past_date
 
 
 product_search = ProductSearch()
@@ -89,4 +90,41 @@ def test_search_multiple_pages():
         'subcategory': 'Laptop Bags',
         'color': 'Pink'
     })
-    assert len(product_search.results) == 549
+    assert len(product_search.results) >= 545
+    # More products are added all the time so it'd be tricky to pin
+    # down an exact number that wouldn't require changing all the time.
+    # However, the search should always return >545 unique items.
+    # May need to be changed in the future if Vera Bradley goes out
+    # of style. (possibly occurred already?)
+
+
+def test_product_update():
+    possible_arguments = OrderedDict({
+        'brand': 'LuLaRoe',
+        'sex': 'Women',
+        'category': 'Dresses',
+        'subcategory': 'Mini',
+        'color': 'Black',
+        'size': 'M',
+        'sort': 'added_desc',
+        'type': 'closet',
+        'price': '26-50'
+    })
+    request_str = product_search._build_request(possible_arguments)
+    product_search.execute_search(request_str)
+
+    first_result = product_search.results[0]
+    assert first_result.updated_at is None
+    first_result.update(product_search.session, built_from='tile')
+    assert isinstance(first_result.updated_at, datetime.datetime)
+
+
+def test_get_past_date():
+    test_strings = ['Updated 3 minutes ago', 'Updated 3 hours ago',
+                    'Updated 3 days ago']
+    for string in test_strings:
+        assert type(get_past_date(string)) == datetime.datetime
+
+    with pytest.raises(ValueError):
+        string = "Updated 90 eons ago."
+        get_past_date(string)
