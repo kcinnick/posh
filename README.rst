@@ -26,7 +26,13 @@ Aspiring Poshmark bot/scraper/etc.
 Features
 --------
 
-* TODO
+* Build products from URL 
+* Build products from search results
+* Search with as many (or few!) arguments as you want!
+
+TODO
+-------
+Add methods for inserting to DB for long-term analysis, build out purchase/watch methods, lots more :-)
 
 Credits
 -------
