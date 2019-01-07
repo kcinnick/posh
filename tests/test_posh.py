@@ -39,7 +39,9 @@ def test_build_request():
         possible_arguments = dict(sorted(possible_arguments.items(),
                                          key=lambda x: random()))
         test_string = product_search._build_request(possible_arguments)
-        assert test_string == 'https://poshmark.com/brand/LuLaRoe-Women-Dresses-Mini-color-Black?sort_by=added_desc&size%5B%5D=M&condition=closet&price%5B%5D=26-50'
+        assert test_string == 'https://poshmark.com/brand/LuLaRoe-Wom' + \
+            'en-Dresses-Mini-color-Black?sort_by=added_des' + \
+            'c&size%5B%5D=M&condition=closet&price%5B%5D=26-50'
 
 
 def test_execute_search():
@@ -122,6 +124,7 @@ def test_get_past_date():
         string = "Updated 90 eons ago."
         get_past_date(string)
 
+
 def test_prepare_for_db_insert():
     arguments = OrderedDict({
         'brand': 'LuLaRoe',
@@ -134,7 +137,15 @@ def test_prepare_for_db_insert():
         'type': 'closet',
         'price': '26-50'
     })
-    
+
     product_search.execute_search(arguments)
 
     first_result = product_search.results[0]
+
+    assert first_result.description is None
+
+    # first_result._prepare_for_db_insert()
+    #assert isinstance(first_result.description, str)
+
+    # Currently fails - need to find solution to
+    # supplying `session` arg to a forced update.

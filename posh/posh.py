@@ -55,10 +55,10 @@ class Product:
         self.listing_id = listing_id
         self.title = title
         self.pictures = pictures
+        self.updated_at = updated_at
 
         # The following attributes are only available if built from URL.
 
-        self.updated_at = updated_at
         self.description = description
         self.colors = colors
         self.comments = comments
@@ -85,7 +85,8 @@ class Product:
 
     def _build_product_from_url(self, session):
 
-        self._built_from = 'url'
+        if not self._built_from:
+            self._built_from = 'url'
 
         soup = BeautifulSoup(session.get(self.url).content, 'lxml')
 
