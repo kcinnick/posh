@@ -55,19 +55,13 @@ def test_execute_search():
         'price': '26-50'
     })
 
-    possible_arguments = dict(sorted(possible_arguments.items(),
-                                     key=lambda x: random()))
     for i in range(1, 5):
         possible_arguments = dict(sorted(possible_arguments.items(),
                                          key=lambda x: random()))
-        test_string = product_search._build_request(possible_arguments)
-        assert test_string == 'https://poshmark.com/brand/LuLaRoe-Wo' + \
-            'men-Dresses-Mini-color-Black?sort_by=added_desc' + \
-            '&size%5B%5D=M&condition=closet&price%5B%5D=26-50'
-        product_search.execute_search(test_string, page_number=1)
+        product_search.execute_search(possible_arguments, page_number=1)
         assert len(product_search.results) == 15
         product_search.results = []
-    product_search.execute_search(test_string, page_number=25)
+    product_search.execute_search(possible_arguments, page_number=25)
     assert len(product_search.results) == 0
 
 
@@ -110,8 +104,7 @@ def test_product_update():
         'type': 'closet',
         'price': '26-50'
     })
-    request_str = product_search._build_request(possible_arguments)
-    product_search.execute_search(request_str)
+    product_search.execute_search(possible_arguments)
 
     first_result = product_search.results[0]
     assert first_result.updated_at is None
@@ -128,3 +121,20 @@ def test_get_past_date():
     with pytest.raises(ValueError):
         string = "Updated 90 eons ago."
         get_past_date(string)
+
+def test_prepare_for_db_insert():
+    arguments = OrderedDict({
+        'brand': 'LuLaRoe',
+        'sex': 'Women',
+        'category': 'Dresses',
+        'subcategory': 'Mini',
+        'color': 'Black',
+        'size': 'M',
+        'sort': 'added_desc',
+        'type': 'closet',
+        'price': '26-50'
+    })
+    
+    product_search.execute_search(arguments)
+
+    first_result = product_search.results[0]

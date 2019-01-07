@@ -167,12 +167,14 @@ class ProductSearch:
 
         return
 
-    def execute_search(self, request_str, page_number=None, items=None):
+    def execute_search(self, arguments, page_number=None, items=None):
         """
         Given a request_str, executes the associated search.
         Gathers results, turns their HTML into Product objects,
         then adds them to the ProductSearch object's results attr.
         """
+
+        request_str = self._build_request(arguments)
 
         if page_number:
             request_str += f'&max_id={page_number}'
@@ -193,7 +195,7 @@ class ProductSearch:
         request_str = self._build_request(arguments)
         for page in range(1, pages + 1):
             old_results_len = len(self.results)
-            self.execute_search(request_str, str(page), self.results)
+            self.execute_search(arguments, str(page), self.results)
             new_results_len = len(self.results)
             if new_results_len == old_results_len:
                 return
