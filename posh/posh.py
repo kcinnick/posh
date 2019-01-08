@@ -35,7 +35,7 @@ def get_past_date(str_days_ago):
 class Product:
     """
     An individual product on Poshmark. Can currently be built
-    from either a search or (TODO instantiated with a URL directly.)
+    from either a search or built with a URL directly.
     Some attributes can only be gathered via search, while some can
     only be gathered via URL.  A product's full information can be
     gathered when the product originates from a search, but not
@@ -67,12 +67,13 @@ class Product:
 
     def _prepare_for_db_insert(self):
         if self._built_from == 'tile':
-            self.update('url')
+            self.update(self.session, 'url')
 
-    def _build_product_from_tile(self, tile):
+    def _build_product_from_tile(self, tile, session):
         """
         Builds products from tiles, i.e. returned search results.
         """
+        self.session = session
         self._built_from = 'tile'
 
         self.posted_at = tile['data-created-at']
@@ -84,7 +85,6 @@ class Product:
         self.title = tile.find('a')['title']
 
     def _build_product_from_url(self, session):
-
         if not self._built_from:
             self._built_from = 'url'
 
@@ -102,6 +102,10 @@ class Product:
         self.title = soup.find('h1', class_='title').text
         updated_at = soup.find('span', class_='time').text
         self.updated_at = get_past_date(updated_at)
+        self.description = soup.find('div', class_='description').text
+        self.colors = None  # Not yet implemented.
+        self.comments = soup.find(
+            'div', class_='comments')  # Not yet fully implemented.
 
     def update(self, session, built_from='tile'):
         if built_from == 'tile':
@@ -187,7 +191,7 @@ class ProductSearch:
         for tile in tiles:
             p = Product(
                 url=f"https://poshmark.com{tile.find('a').get('href')}")
-            p._build_product_from_tile(tile)
+            p._build_product_from_tile(tile, self.session)
             self.results.append(p)
 
         return

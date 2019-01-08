@@ -144,7 +144,7 @@ def test_prepare_for_db_insert():
 
     assert first_result.description is None
 
-    # first_result._prepare_for_db_insert()
+    #first_result._prepare_for_db_insert()
     #assert isinstance(first_result.description, str)
 
     # Currently fails - need to find solution to
