@@ -6,12 +6,11 @@ from collections import OrderedDict
 import datetime
 from dateutil.relativedelta import relativedelta
 import requests
-import pytest
 
 
 def get_past_date(str_days_ago):
     """
-    str_days_ago: str "Updated 3 minutes ago"
+    Converts arbitrary "updated at" strings to proper datetimes.
     """
 
     today = datetime.datetime.today()
@@ -29,7 +28,9 @@ def get_past_date(str_days_ago):
         date = today - relativedelta(days=int(split_str[1]))
         return date
 
-    raise ValueError("Wrong argument format.")
+    date = datetime.datetime.strptime(str_days_ago[8:],
+                                      '%b %d %I:%M%p')
+    return date
 
 
 class Product:
