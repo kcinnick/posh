@@ -66,14 +66,13 @@ class Product:
         self._built_from = None
 
     def _prepare_for_db_insert(self):
-        if self._built_from == 'tile':
-            self.update(self.session, 'url')
+        self.update(self.session)
 
     def _build_product_from_tile(self, tile, session):
         """
         Builds products from tiles, i.e. returned search results.
         """
-        self.session = session
+        self.session = session  # This is lazy
         self._built_from = 'tile'
 
         self.posted_at = tile['data-created-at']
@@ -85,6 +84,8 @@ class Product:
         self.title = tile.find('a')['title']
 
     def _build_product_from_url(self, session):
+        self.session = session  # This is lazy
+
         if not self._built_from:
             self._built_from = 'url'
 
