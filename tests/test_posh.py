@@ -147,5 +147,3 @@ def test_prepare_for_db_insert():
     first_result._prepare_for_db_insert()
     assert isinstance(first_result.description, str)
 
-    # Currently fails - need to find solution to
-    # supplying `session` arg to a forced update.
