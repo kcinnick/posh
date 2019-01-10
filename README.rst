@@ -34,6 +34,11 @@ TODO
 -------
 Add methods for inserting to DB for long-term analysis, build out purchase/watch methods, lots more :-)
 
+"Why isn't X a feature"
+-------
+Because I haven't thought of it, but I'd appreciate the suggestion!
+
+
 Credits
 -------
 
