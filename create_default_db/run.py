@@ -4,17 +4,19 @@ from sqlalchemy_utils import database_exists, create_database
 
 
 def create_product_table():
+
     engine = create_engine(
         "postgres:///nick:nickspassword@localhost/test:5432")
+
     if not database_exists(engine.url):
         create_database(engine.url)
     connection = engine.connect()
 
     db_session = scoped_session(sessionmaker(
-        autocommit=False, autoflush=True, bind=engine))
-    query = "create table if not exists product ("
+        autocommit=True, autoflush=True, bind=engine))
+
+    query = "create table product("
     query += " URL VARCHAR(355) PRIMARY KEY,"
-    query += " POSTED_AT TIMESTAMP,"
     query += " OWNER VARCHAR(100),"
     query += " BRAND VARCHAR(100),"
     query += " PRICE DECIMAL,"
@@ -27,6 +29,7 @@ def create_product_table():
     query += " COMMENTS TEXT,"
     query += " BUILT_FROM VARCHAR(4)"
     query += ")"
+
     db_session.execute(query)
 
 

@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 from collections import OrderedDict
 import datetime
 from dateutil.relativedelta import relativedelta
+from dateutil.parser import parse as date_parser
 import requests
 
 
@@ -28,8 +29,8 @@ def get_past_date(str_days_ago):
         date = today - relativedelta(days=int(split_str[1]))
         return date
 
-    date = datetime.datetime.strptime(str_days_ago[8:],
-                                      '%b %d %I:%M%p')
+    date = date_parser(str_days_ago[8:]).date()
+
     return date
 
 
@@ -66,8 +67,23 @@ class Product:
 
         self._built_from = None
 
-    def _prepare_for_db_insert(self):
+    def insert_into_db(self, db_session, table_name='product'):
         self.update(self.session)
+        query = f""" \
+                INSERT INTO {table_name} (url, owner, brand, price,\
+                size, listing_id, title, pictures, description,\
+                colors, comments, built_from)
+                VALUES
+                (\
+                '{self.url}', '{self.owner}','{self.brand}',
+                 {self.price}, '{', '.join([i for i in self.size])}',
+                 '{self.listing_id}',
+                 '{self.title}', '{self.pictures}',
+                 '{self.description}', '{self.colors}', '{self.comments}',
+                 '{self._built_from}')
+                """
+        db_session.execute(query)
+        return
 
     def _build_product_from_tile(self, tile, session):
         """
