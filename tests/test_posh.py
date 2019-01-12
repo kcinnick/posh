@@ -12,6 +12,8 @@ from random import random
 
 from posh.posh import ProductSearch, Product, get_past_date
 
+from sqlalchemy import create_engine
+from sqlalchemy.orm import scoped_session, sessionmaker
 
 product_search = ProductSearch()
 
@@ -116,7 +118,7 @@ def test_product_update():
 
 def test_get_past_date():
     test_strings = ['Updated 3 minutes ago', 'Updated 3 hours ago',
-                    'Updated 3 days ago']
+                    'Updated 3 days ago', 'Updated Yesterday']
     for string in test_strings:
         assert type(get_past_date(string)) == datetime.datetime
 
@@ -147,3 +149,33 @@ def test_prepare_for_db_insert():
     first_result.update(product_search.session)
 
     assert isinstance(first_result.description, str)
+
+
+@pytest.mark.skip(reason="Needs to be customized to each user's DB instance.")
+def test_insert_into_db():
+    engine = create_engine(
+        "postgres:///nick:nickspassword@localhost/test:5432")
+
+    connection = engine.connect()
+
+    db_session = scoped_session(sessionmaker(
+        autocommit=True, autoflush=True, bind=engine))
+
+    product = Product(url='https://poshmark.com/listi' +
+                      'ng/Lularoe-Carly-5c2d86fcbaebf68a9b6893b0')
+    product._build_product_from_url(product_search.session)
+
+    product.insert_into_db(db_session)
+
+
+def test_search_by_query():
+    product_search.results = []
+
+    arguments = OrderedDict({
+        'query': 'signed jersey'
+    })
+
+    product_search.execute_search(arguments)
+
+    first_result = product_search.results[0]
+    assert 'jersey' in first_result.title.lower()
