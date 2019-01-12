@@ -61,7 +61,7 @@ def test_execute_search():
         possible_arguments = dict(sorted(possible_arguments.items(),
                                          key=lambda x: random()))
         product_search.execute_search(possible_arguments, page_number=1)
-        assert len(product_search.results) == 15
+        assert len(product_search.results) == 12
         product_search.results = []
     product_search.execute_search(possible_arguments, page_number=25)
     assert len(product_search.results) == 0
@@ -73,7 +73,7 @@ def test_build_product_from_url():
     product._build_product_from_url(product_search.session)
     assert product.owner == 'cmunger81'
     assert product.brand == 'LuLaRoe'
-    assert product.price == 35.0
+    assert product.price == 32.0
     assert product.size == ['S']
 
 
@@ -144,5 +144,6 @@ def test_prepare_for_db_insert():
 
     assert first_result.description is None
 
-    first_result._prepare_for_db_insert()
+    first_result.update(product_search.session)
+
     assert isinstance(first_result.description, str)

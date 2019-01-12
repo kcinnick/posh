@@ -17,6 +17,9 @@ def get_past_date(str_days_ago):
     today = datetime.datetime.today()
     split_str = str_days_ago.split()
 
+    if 'Yesterday' in split_str:
+        return datetime.datetime.now() - relativedelta(days=1)
+
     if 'minute' in split_str[2]:
         return datetime.datetime.now() - \
             datetime.timedelta(minutes=int(split_str[1]))
@@ -89,12 +92,13 @@ class Product:
         """
         Builds products from tiles, i.e. returned search results.
         """
+
         self.session = session  # This is lazy
         self._built_from = 'tile'
 
         self.posted_at = tile['data-created-at']
         self.owner = tile['data-creator-handle']
-        self.brand = tile['data-post-brand']
+        self.brand = tile.get('data-post-brand')  # Not always there.
         self.price = tile['data-post-price']
         self.size = tile['data-post-size']
         self.listing_id = tile['id']
@@ -146,6 +150,8 @@ class ProductSearch:
             addition = addition.replace(' ', '_')
         elif argument == 'brand':
             addition = addition.replace(' ', '_')
+        elif argument == 'query':
+            addition = addition.replace(' ', '+')
         return addition
 
     def _build_request(self, arguments: dict):
@@ -157,7 +163,8 @@ class ProductSearch:
 
         string = 'https://poshmark.com/'
         possible_arguments = OrderedDict(
-            {'brand': 'brand/',
+            {'query': 'search?query=',
+             'brand': 'brand/',
              'sex': '-',
              'category': '-',
              'subcategory': '-',
@@ -165,15 +172,23 @@ class ProductSearch:
              'sort': '?sort_by=',
              'size': '&size%5B%5D=',
              'type': '&condition=',
-             'price': '&price%5B%5D='}
+             'price': '&price%5B%5D='
+             }
         )
         for argument, value in possible_arguments.items():
             if argument == 'sort' and not arguments.get(argument):
                 string += possible_arguments['sort'] + 'added_desc'
+            elif arguments.get(argument) and argument == 'query':
+                addition = possible_arguments[argument] + arguments[argument]
+                addition = self._format_argument(argument, value, addition)
+                string += addition
             elif arguments.get(argument):
                 addition = possible_arguments[argument] + arguments[argument]
                 addition = self._format_argument(argument, value, addition)
                 string += addition
+
+        if 'query' in string:
+            string = string.replace('?sort_by', '&sort_by')
 
         return string
 
@@ -205,6 +220,7 @@ class ProductSearch:
         r = self.session.get(request_str)
 
         soup = BeautifulSoup(r.content, 'lxml')
+
         tiles = soup.find_all('div', class_='tile')
         for tile in tiles:
             p = Product(
