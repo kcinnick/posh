@@ -16,7 +16,7 @@ posh
 
 
 
-Aspiring Poshmark bot/scraper/etc.
+Not-yet-fully-featured Poshmark bot/scraper/etc.
 
 
 * Free software: MIT license
@@ -32,7 +32,7 @@ Features
 
 TODO
 -------
-Add methods for inserting to DB for long-term analysis, build out purchase/watch methods, lots more :-)
+Add methods for inserting to DB for long-term analysis, product price monitoring, build out purchase/watch methods, lots more :-)
 
 "Why isn't X a feature"
 -------
