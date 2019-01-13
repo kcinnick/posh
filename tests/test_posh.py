@@ -185,3 +185,13 @@ def test_search_by_query():
 
     first_result = product_search.results[0]
     assert 'jersey' in first_result.title.lower()
+
+def test_category_search():
+    product_search.results = []
+
+    arguments = {'category': 'Makeup',
+                 'sex': 'Women'}
+
+    product_search.execute_search(arguments)
+
+    assert len(product_search.results) > 0
