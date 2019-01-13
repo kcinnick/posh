@@ -13,28 +13,35 @@ def get_past_date(str_days_ago):
     """
     Converts arbitrary "updated at" strings to proper datetimes.
     """
-
     today = datetime.datetime.today()
     split_str = str_days_ago.split()
 
-    if 'Yesterday' in split_str:
+    if len(split_str) < 2:   # Could all of this be replaced by date_parser?
+        date = date_parser(str_days_ago[8:])
+        return date
+
+    elif 'Yesterday' in split_str:
         return datetime.datetime.now() - relativedelta(days=1)
 
-    if 'minute' in split_str[2]:
-        return datetime.datetime.now() - \
-            datetime.timedelta(minutes=int(split_str[1]))
+    elif len(split_str) > 2:
+        if 'minute' in split_str[2]:
+            return datetime.datetime.now() - \
+                datetime.timedelta(minutes=int(split_str[1]))
 
-    if 'hour' in split_str[2]:
-        date = datetime.datetime.now() - relativedelta(hours=int(split_str[1]))
-        return date
+        elif 'hour' in split_str[2]:
+            date = datetime.datetime.now() - relativedelta(hours=int(split_str[1]))
+            return date
 
-    if 'day' in split_str[2]:
-        date = today - relativedelta(days=int(split_str[1]))
-        return date
+        elif 'day' in split_str[2]:
+            date = today - relativedelta(days=int(split_str[1]))
+            return date
 
-    date = date_parser(str_days_ago[8:]).date()
-
-    return date
+        else:
+            raise ValueError(
+        f'Supplied date str is {split_str}, ' +
+        'which doesn\'t match any supported formats.')
+    else:
+        return date_parser(str_days_ago[8:])
 
 
 class Product:

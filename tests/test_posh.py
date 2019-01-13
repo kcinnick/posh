@@ -7,6 +7,7 @@ import pytest
 
 from collections import OrderedDict
 import datetime
+from dateutil.relativedelta import relativedelta
 
 from random import random
 
@@ -125,6 +126,11 @@ def test_get_past_date():
     with pytest.raises(ValueError):
         string = "Updated 90 eons ago."
         get_past_date(string)
+
+    assert get_past_date('Updated 3 hours ago').hour == \
+        (datetime.datetime.today() - relativedelta(hours=3)).hour
+
+    assert type(get_past_date('Updated 9/27/2018')) == datetime.datetime
 
 
 def test_prepare_for_db_insert():
