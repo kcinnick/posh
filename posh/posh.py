@@ -29,7 +29,8 @@ def get_past_date(str_days_ago):
                 datetime.timedelta(minutes=int(split_str[1]))
 
         elif 'hour' in split_str[2]:
-            date = datetime.datetime.now() - relativedelta(hours=int(split_str[1]))
+            date = datetime.datetime.now() - \
+                relativedelta(hours=int(split_str[1]))
             return date
 
         elif 'day' in split_str[2]:
@@ -38,8 +39,8 @@ def get_past_date(str_days_ago):
 
         else:
             raise ValueError(
-        f'Supplied date str is {split_str}, ' +
-        'which doesn\'t match any supported formats.')
+                f'Supplied date str is {split_str}, ' +
+                'which doesn\'t match any supported formats.')
     else:
         return date_parser(str_days_ago[8:])
 
@@ -193,6 +194,10 @@ class ProductSearch:
                 addition = possible_arguments[argument] + arguments[argument]
                 addition = self._format_argument(argument, value, addition)
                 string += addition
+
+        if string[21] == '-':
+            if 'category' in arguments.keys():
+                string = string[:21] + 'category/' + string[22:]
 
         if 'query' in string:
             string = string.replace('?sort_by', '&sort_by')
