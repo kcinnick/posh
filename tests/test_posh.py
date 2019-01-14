@@ -2,14 +2,16 @@
 # -*- coding: utf-8 -*-
 
 """Tests for `posh` package."""
-
 import pytest
+
+from bs4 import BeautifulSoup
 
 from collections import OrderedDict
 import datetime
 from dateutil.relativedelta import relativedelta
 
 from random import random
+from requests import get
 
 from posh.posh import ProductSearch, Product, get_past_date
 
@@ -182,9 +184,17 @@ def test_search_by_query():
     })
 
     product_search.execute_search(arguments)
+    #  It should be made clear somewhere that this method searches
+    #  for items exactly the same as if the search occurred on Poshmark.com
+    #  - which means that all sorts of non-jersey products get included
+    #  in this search.  Consider adding a filter arg to include
+    #  only items with query in title, etc. instead of trusting
+    #  Poshmark's search.
 
-    first_result = product_search.results[0]
-    assert 'jersey' in first_result.title.lower()
+    result = any([i.title.lower() for i in product_search.results
+                  if 'jersey' in i.title.lower()])
+    assert result
+
 
 def test_category_search():
     product_search.results = []
@@ -192,6 +202,12 @@ def test_category_search():
     arguments = {'category': 'Makeup',
                  'sex': 'Women'}
 
-    product_search.execute_search(arguments)
+    request_str = product_search._build_request(arguments)
 
-    assert len(product_search.results) > 0
+    r = get(request_str, headers={'User-Agent': 'Posh'})
+    soup = BeautifulSoup(r.content, 'lxml')
+
+    assert soup.find_all(
+        'span', attrs={'itemprop': 'name'})[1].text == 'Makeup'
+
+    # The second span with name itemprop is the currently selected category.
