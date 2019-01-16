@@ -13,6 +13,11 @@ def get_past_date(str_days_ago):
     """
     Converts arbitrary "updated at" strings to proper datetimes.
     """
+    str_days_ago = str_days_ago.replace(' an ', '1')
+    #  When it's been <2 hours, Poshmark returns "an hour ago"
+    #  instead of "1 hour ago" - which, without this replacement,
+    #  screws up the later date parsing.
+
     today = datetime.datetime.today()
     split_str = str_days_ago.split()
 
@@ -140,6 +145,11 @@ class Product:
     def update(self, session, built_from='tile'):
         if built_from == 'tile':
             self._build_product_from_url(session)
+
+    def get_images(self, session):
+        raise NotImplementedError
+        if built_from == 'tile':
+            return self.url
 
 
 class ProductSearch:
