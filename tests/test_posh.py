@@ -214,7 +214,8 @@ def test_category_search():
 
     # The second span with name itemprop is the currently selected category.
 
-@pytest.mark.skip(reason="Not yet implemented.")
 def test_get_images():
-    result = product_search.results[0]
-    assert result.get_images() == 'dog'
+    product = Product(url='https://poshmark.com/listing/Lularo' +
+                      'e-Carly-5c2d86fcbaebf68a9b6893b0')
+    product._build_product_from_url(product_search.session)
+    assert len(product.pictures) == 1
