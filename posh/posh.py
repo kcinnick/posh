@@ -71,6 +71,8 @@ class Product:
                  brand=None, price=None, size=None, listing_id=None,
                  title=None, pictures=None, updated_at=None,
                  description=None, colors=None, comments=None):
+        self.__soup = None
+
         self.url = url
         self.posted_at = posted_at
         self.owner = owner
@@ -131,6 +133,8 @@ class Product:
             self._built_from = 'url'
 
         soup = BeautifulSoup(session.get(self.url).content, 'lxml')
+        self.__soup = soup
+        self._get_pictures()
 
         self.owner = soup.find('div', class_='handle').text[1:]
         self.brand = soup.find('meta', attrs={'property': 'poshmark:brand'}
@@ -153,10 +157,15 @@ class Product:
         if built_from == 'tile':
             self._build_product_from_url(session)
 
-    def get_images(self, session):
-        raise NotImplementedError
-        if built_from == 'tile':
-            return self.url
+    def _get_pictures(self):
+        if not self.__soup:
+            self.__soup = BeautifulSoup(
+                self.session.get(self.url).content, 'lxml')
+        pictures = self.__soup.find_all('img', attrs={'itemprop': 'image'})
+        picture_urls = [i.get('data-img-src') for i in pictures if i.get(
+            'data-img-src')]
+        self.pictures = picture_urls
+        return
 
 
 class ProductSearch:
