@@ -66,7 +66,7 @@ def test_execute_search():
         possible_arguments = dict(sorted(possible_arguments.items(),
                                          key=lambda x: random()))
         product_search.execute_search(possible_arguments, page_number=1)
-        assert len(product_search.results) == 12
+        assert len(product_search.results) > 10
         product_search.results = []
     product_search.execute_search(possible_arguments, page_number=25)
     assert len(product_search.results) == 0
@@ -121,7 +121,9 @@ def test_product_update():
 
 def test_get_past_date():
     test_strings = ['Updated 3 minutes ago', 'Updated 3 hours ago',
-                    'Updated 3 days ago', 'Updated Yesterday']
+                    'Updated an hour ago', 'Updated 3 days ago',
+                    'Updated Yesterday']
+
     for string in test_strings:
         assert type(get_past_date(string)) == datetime.datetime
 
@@ -211,3 +213,8 @@ def test_category_search():
         'span', attrs={'itemprop': 'name'})[1].text == 'Makeup'
 
     # The second span with name itemprop is the currently selected category.
+
+@pytest.mark.skip(reason="Not yet implemented.")
+def test_get_images():
+    result = product_search.results[0]
+    assert result.get_images() == 'dog'
