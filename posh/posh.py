@@ -13,7 +13,9 @@ def get_past_date(str_days_ago):
     """
     Converts arbitrary "updated at" strings to proper datetimes.
     """
-    str_days_ago = str_days_ago.replace(' an ', '1')
+
+    str_days_ago = str_days_ago.replace(' an ', ' 1 ')
+
     #  When it's been <2 hours, Poshmark returns "an hour ago"
     #  instead of "1 hour ago" - which, without this replacement,
     #  screws up the later date parsing.
@@ -21,12 +23,16 @@ def get_past_date(str_days_ago):
     today = datetime.datetime.today()
     split_str = str_days_ago.split()
 
-    if len(split_str) < 2:   # Could all of this be replaced by date_parser?
+    if 'Yesterday' in split_str:
+        return datetime.datetime.now() - relativedelta(days=1)
+
+    elif len(split_str) < 2:   # Could all of this be replaced by date_parser?
         date = date_parser(str_days_ago[8:])
         return date
 
-    elif 'Yesterday' in split_str:
-        return datetime.datetime.now() - relativedelta(days=1)
+    elif len(split_str) == 2:
+        date = date_parser(str_days_ago[8:])
+        return date
 
     elif len(split_str) > 2:
         if 'minute' in split_str[2]:
@@ -43,11 +49,12 @@ def get_past_date(str_days_ago):
             return date
 
         else:
-            raise ValueError(
-                f'Supplied date str is {split_str}, ' +
-                'which doesn\'t match any supported formats.')
+            return date_parser(str_days_ago[8:])
+
     else:
-        return date_parser(str_days_ago[8:])
+        raise ValueError(
+            f'Supplied date str is {split_str}, ' +
+            'which doesn\'t match any supported formats.')
 
 
 class Product:
