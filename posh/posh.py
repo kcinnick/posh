@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """Main module."""
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, FeatureNotFound
 from collections import OrderedDict
 import datetime
 from dateutil.relativedelta import relativedelta
@@ -134,7 +134,10 @@ class Product:
         if not self._built_from:
             self._built_from = 'url'
 
-        soup = BeautifulSoup(session.get(self.url).content, 'lxml')
+        try:
+            soup = BeautifulSoup(session.get(self.url).content, 'lxml')
+        except FeatureNotFound:
+            soup = BeautifulSoup(session.get(self.url).content)
         self.__soup = soup
         self._get_pictures()
 
@@ -161,8 +164,13 @@ class Product:
 
     def _get_pictures(self):
         if not self.__soup:
-            self.__soup = BeautifulSoup(
-                self.session.get(self.url).content, 'lxml')
+            try:
+                self.__soup = BeautifulSoup(
+                    self.session.get(self.url).content, 'lxml')
+            except FeatureNotFound:
+                self.__soup = BeautifulSoup(
+                    self.session.get(self.url).content)
+
         pictures = self.__soup.find_all('img', attrs={'itemprop': 'image'})
         picture_urls = [i.get('data-img-src') for i in pictures if i.get(
             'data-img-src')]
@@ -272,7 +280,10 @@ class ProductSearch:
 
         r = self.session.get(request_str)
 
-        soup = BeautifulSoup(r.content, 'lxml')
+        try:
+            soup = BeautifulSoup(r.content, 'lxml')
+        except FeatureNotFound:
+            soup = BeautifulSoup(r.content)
 
         tiles = soup.find_all('div', class_='tile')
         for tile in tiles:
