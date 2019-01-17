@@ -4,7 +4,7 @@
 """Tests for `posh` package."""
 import pytest
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, FeatureNotFound
 
 from collections import OrderedDict
 import datetime
@@ -207,7 +207,11 @@ def test_category_search():
     request_str = product_search._build_request(arguments)
 
     r = get(request_str, headers={'User-Agent': 'Posh'})
-    soup = BeautifulSoup(r.content, 'lxml')
+
+    try:
+        soup = BeautifulSoup(r.content, 'lxml')
+    except FeatureNotFound:
+        soup = BeautifulSoup(r.content)
 
     assert soup.find_all(
         'span', attrs={'itemprop': 'name'})[1].text == 'Makeup'
