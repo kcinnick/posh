@@ -73,6 +73,10 @@ class Product:
                  description=None, colors=None, comments=None):
         self.__soup = None
 
+        self._built_from = None
+
+        self.images = None
+
         self.url = url
         self.posted_at = posted_at
         self.owner = owner
@@ -89,8 +93,6 @@ class Product:
         self.description = description
         self.colors = colors
         self.comments = comments
-
-        self._built_from = None
 
     def insert_into_db(self, db_session, table_name='product'):
         self.update(self.session)
@@ -166,6 +168,19 @@ class Product:
             'data-img-src')]
         self.pictures = picture_urls
         return
+
+    def get_images(self):
+        self.images = []
+        if len(self.pictures) == 0:
+            self._get_pictures()
+
+        for index, link in enumerate(self.pictures):
+            r = self.session.get(link)
+            file_name = \
+                f'{self.title}-{self.listing_id}-{self.owner}_{index}.jpg'
+            with open(file_name, 'wb') as f:
+                f.write(r.content)
+                self.images.append(file_name)
 
 
 class ProductSearch:
