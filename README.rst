@@ -16,7 +16,7 @@ posh
 
 
 
-Not-yet-fully-featured Poshmark bot/scraper/etc.
+Not-yet-fully-featured Poshmark bot/scraper/etc. (now available on pip!)
 
 
 * Free software: MIT license
