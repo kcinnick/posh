@@ -214,9 +214,18 @@ def test_category_search():
 
     # The second span with name itemprop is the currently selected category.
 
-def test_get_images():
+
+def test_get_pictures():
     product = Product(url='https://poshmark.com/listing/Lularo' +
                       'e-Carly-5c2d86fcbaebf68a9b6893b0')
     product._build_product_from_url(product_search.session)
     assert len(product.pictures) == 1
 
+
+def test_get_images():
+    product = Product(url='https://poshmark.com/listing/Lularo' +
+                      'e-Carly-5c2d86fcbaebf68a9b6893b0')
+    product._build_product_from_url(product_search.session)
+    product.get_images()
+
+    assert product.images[0] == 'Lularoe Carly-5c2d86fcbaebf68a9b6893b0-cmunger81_0.jpg'
