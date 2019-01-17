@@ -15,8 +15,8 @@ from requests import get
 
 from posh.posh import ProductSearch, Product, get_past_date
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
+#from sqlalchemy import create_engine
+#from sqlalchemy.orm import scoped_session, sessionmaker
 
 product_search = ProductSearch()
 
@@ -219,3 +219,4 @@ def test_get_images():
                       'e-Carly-5c2d86fcbaebf68a9b6893b0')
     product._build_product_from_url(product_search.session)
     assert len(product.pictures) == 1
+
