@@ -28,6 +28,8 @@ Features
 
 * Build products from URL 
 * Build products from search results
+* Build products from arbitrary string searches
+* Get images, size, brand, price, and more from products.
 * Search with as many (or few!) arguments as you want!
 
 TODO
