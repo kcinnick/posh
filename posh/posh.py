@@ -253,6 +253,15 @@ class ProductSearch:
 
         return string
 
+    def _check_strictness(self, tile, arguments):
+        title = tile.find('h4').text.lower()
+        for key, value in arguments.items():
+            if value not in title:
+                return False
+            else:
+                continue
+        return True
+
     def set_headers(self, headers=None):
         """
         If provided, sets headers. Otherwise,
@@ -266,7 +275,8 @@ class ProductSearch:
 
         return
 
-    def execute_search(self, arguments, page_number=None, items=None):
+    def execute_search(self, arguments, page_number=None,
+                       items=None, strict=False):
         """
         Given a request_str, executes the associated search.
         Gathers results, turns their HTML into Product objects,
@@ -287,18 +297,30 @@ class ProductSearch:
 
         tiles = soup.find_all('div', class_='tile')
         for tile in tiles:
-            p = Product(
-                url=f"https://poshmark.com{tile.find('a').get('href')}")
-            p._build_product_from_tile(tile, self.session)
-            self.results.append(p)
-
+            strictness_pass = self._check_strictness(tile, arguments)
+            if strict and strictness_pass:
+                #  There needs to be a better way to do this.
+                p = Product(
+                    url=f"https://poshmark.com{tile.find('a').get('href')}")
+                p._build_product_from_tile(tile, self.session)
+                self.results.append(p)
+                continue
+            elif strict and not strictness_pass:
+                continue
+            elif not strict:
+                p = Product(
+                    url=f"https://poshmark.com{tile.find('a').get('href')}")
+                p._build_product_from_tile(tile, self.session)
+                self.results.append(p)
+                continue
         return
 
-    def search_multiple_pages(self, pages, arguments):
+    def search_multiple_pages(self, pages, arguments, strict=False):
         request_str = self._build_request(arguments)
         for page in range(1, pages + 1):
             old_results_len = len(self.results)
-            self.execute_search(arguments, str(page), self.results)
+            self.execute_search(arguments=arguments, page_number=str(page),
+                                items=self.results, strict=strict)
             new_results_len = len(self.results)
             if new_results_len == old_results_len:
                 return

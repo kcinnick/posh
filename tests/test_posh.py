@@ -232,4 +232,15 @@ def test_get_images():
     product._build_product_from_url(product_search.session)
     product.get_images()
 
-    assert product.images[0] == 'Lularoe Carly-5c2d86fcbaebf68a9b6893b0-cmunger81_0.jpg'
+    assert product.images[0] == 'Lularoe Carly-5c2d86fcbaebf68a9b6893' + \
+        'b0-cmunger81_0.jpg'
+
+
+def test_strict_search():
+    product_search.results = []
+    product_search.search_multiple_pages(pages=2, arguments={
+        'query': 'signed jersey'
+    }, strict=True)
+
+    assert all(['signed jersey' in i.title.lower()
+                for i in product_search.results])
