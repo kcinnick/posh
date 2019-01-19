@@ -13,7 +13,7 @@ from dateutil.relativedelta import relativedelta
 from random import random
 from requests import get
 
-from posh.posh import ProductSearch
+from posh.product_search import ProductSearch
 from posh.product import Product, get_past_date
 
 #from sqlalchemy import create_engine
