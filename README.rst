@@ -31,10 +31,11 @@ Features
 * Build products from arbitrary string searches
 * Get images, size, brand, price, and more from products.
 * Search with as many (or few!) arguments as you want!
+* Insert product information into any database for long-term analysis
 
 TODO
 -------
-Add methods for inserting to DB for long-term analysis, product price monitoring, build out purchase/watch methods, lots more :-)
+Product price monitoring, build out purchase/watch methods, lots more :-)
 
 "Why isn't X a feature"
 -------
@@ -53,3 +54,9 @@ Development Goals
 -------
 
 As of now, my goal for this project is just to extend it out as much as makes sense by thinking of new ideas, methods, and functions that'd be useful or interesting.  Ideally, down the road this module could answer questions like "What was the average selling price of a new-with-tag Vera Wang dress over the last 6 months," which could inform you to buy one because it's relatively cheap or sell one because it's relatively expensive now compared to the average.  So, I don't really have definitive guidelines of where this will go.  That's the fun part!
+
+Soft goals as of 1/19/2019:
+- build out method for price monitoring
+- create test associated with that
+
+The issue with creating a method that monitors price over time is maintaining connectivity over a long period of time.  There are several HTTP hiccups that can occur on any given request that are server-side in nature and thus, can't be cut off at the head within this script.  Not quite sure how I'll solve this yet but I'll update when I have a better grasp :-)
