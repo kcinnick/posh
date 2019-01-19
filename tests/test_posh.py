@@ -13,7 +13,8 @@ from dateutil.relativedelta import relativedelta
 from random import random
 from requests import get
 
-from posh.posh import ProductSearch, Product, get_past_date
+from posh.product_search import ProductSearch
+from posh.product import Product, get_past_date
 
 #from sqlalchemy import create_engine
 #from sqlalchemy.orm import scoped_session, sessionmaker
