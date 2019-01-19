@@ -1,4 +1,4 @@
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, FeatureNotFound
 import datetime
 from dateutil.parser import parse as date_parser
 from dateutil.relativedelta import relativedelta
