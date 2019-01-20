@@ -245,3 +245,10 @@ def test_strict_search():
 
     assert all(['signed jersey' in i.title.lower()
                 for i in product_search.results])
+
+
+def test_search_over_time():
+    product_search.results = []
+    product_search.search_product_price_over_time(arguments=OrderedDict({
+        'query': 'new vera wang dress'}
+    ))
