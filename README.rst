@@ -37,6 +37,8 @@ TODO
 -------
 Product price monitoring, build out purchase/watch methods, lots more :-)
 
+Add real docs, with usage examples and explanations of methods and functions.
+
 "Why isn't X a feature"
 -------
 Because I haven't thought of it, but I'd appreciate the suggestion!
