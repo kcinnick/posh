@@ -3,8 +3,23 @@ from collections import OrderedDict
 import datetime
 from dateutil.relativedelta import relativedelta
 from posh.product import Product
+import operator
 import requests
+import time
 
+
+def chunks(l, n):
+    """Yield successive n-sized chunks from l."""
+    for i in range(0, len(l), n):
+        yield l[i:i + n]
+
+
+def datestring_to_timestamp(str):
+    return time.mktime(time.strptime(str, "%Y-%m-%d %H:%M:%S %z"))
+
+
+def timestamp_to_datestring(timestamp):
+    return time.strftime('%Y-%m-%d %H:%M:%S %z', time.localtime(timestamp))
 
 class ProductSearch:
     """
@@ -132,6 +147,7 @@ class ProductSearch:
 
     def search_multiple_pages(self, pages, arguments, strict=False):
         request_str = self._build_request(arguments)
+
         for page in range(1, pages + 1):
             old_results_len = len(self.results)
             self.execute_search(arguments=arguments, page_number=str(page),
@@ -139,3 +155,13 @@ class ProductSearch:
             new_results_len = len(self.results)
             if new_results_len == old_results_len:
                 return
+
+    def search_product_price_over_time(self, arguments):
+        self.search_multiple_pages(arguments=arguments, pages=48, strict=True)
+        time_sorted_products = sorted(
+            self.results, key=operator.attrgetter('posted_at'))
+        for product_chunk in chunks(time_sorted_products, 25):
+            avg_time = float(sum([datestring_to_timestamp(i.posted_at)
+                                  for i in product_chunk])) / max(len(product_chunk), 1)
+            avg_price =  sum([float(i.price.replace('$', '')) for i in product_chunk])
+            print(timestamp_to_datestring(avg_time), avg_price)
