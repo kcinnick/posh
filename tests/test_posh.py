@@ -69,7 +69,7 @@ def test_execute_search():
         product_search.execute_search(possible_arguments, page_number=1)
         assert len(product_search.results) > 10
         product_search.results = []
-    product_search.execute_search(possible_arguments, page_number=25)
+    product_search.execute_search(possible_arguments, page_number=47)
     assert len(product_search.results) == 0
 
 
