@@ -21,6 +21,7 @@ def datestring_to_timestamp(str):
 def timestamp_to_datestring(timestamp):
     return time.strftime('%Y-%m-%d %H:%M:%S %z', time.localtime(timestamp))
 
+
 class ProductSearch:
     """
     May change substantially in future versions. Currently,
@@ -81,12 +82,19 @@ class ProductSearch:
         if 'query' in string:
             string = string.replace('?sort_by', '&sort_by')
 
+        if 'max_id' in arguments.keys():
+            string = string.replace(
+                'search?query', f'search?max_id={arguments["max_id"]}&query')
+
+        #  Too many statements to accomplish proper string mashing.
+        #  Find a way to tighten the above.
+
         return string
 
     def _check_strictness(self, tile, arguments):
         title = tile.find('h4').text.lower()
         for key, value in arguments.items():
-            if value not in title:
+            if str(value).lower() not in title:
                 return False
             else:
                 continue
@@ -112,11 +120,13 @@ class ProductSearch:
         Gathers results, turns their HTML into Product objects,
         then adds them to the ProductSearch object's results attr.
         """
+        if page_number:
+            if page_number == 1:
+                pass
+            else:
+                arguments.update({'max_id': int(page_number)})
 
         request_str = self._build_request(arguments)
-
-        if page_number:
-            request_str += f'&max_id={page_number}'
 
         r = self.session.get(request_str)
 
@@ -126,6 +136,7 @@ class ProductSearch:
             soup = BeautifulSoup(r.content)
 
         tiles = soup.find_all('div', class_='tile')
+
         for tile in tiles:
             strictness_pass = self._check_strictness(tile, arguments)
             if strict and strictness_pass:
@@ -146,22 +157,26 @@ class ProductSearch:
         return
 
     def search_multiple_pages(self, pages, arguments, strict=False):
-        request_str = self._build_request(arguments)
-
         for page in range(1, pages + 1):
             old_results_len = len(self.results)
-            self.execute_search(arguments=arguments, page_number=str(page),
+            self.execute_search(arguments=arguments, page_number=page,
                                 items=self.results, strict=strict)
             new_results_len = len(self.results)
-            if new_results_len == old_results_len:
-                return
+            if not strict:
+                if new_results_len == old_results_len:
+                    return
 
-    def search_product_price_over_time(self, arguments):
-        self.search_multiple_pages(arguments=arguments, pages=48, strict=True)
+    def search_product_price_over_time(self, arguments, strict=False):
+        self.search_multiple_pages(
+            arguments=arguments, pages=48, strict=strict)
         time_sorted_products = sorted(
             self.results, key=operator.attrgetter('posted_at'))
+
         for product_chunk in chunks(time_sorted_products, 25):
-            avg_time = float(sum([datestring_to_timestamp(i.posted_at)
-                                  for i in product_chunk])) / max(len(product_chunk), 1)
-            avg_price =  sum([float(i.price.replace('$', '')) for i in product_chunk])
+            avg_time = float(sum([
+                datestring_to_timestamp(i.posted_at)
+                for i in product_chunk])) / max(len(product_chunk), 1)
+            avg_price = sum(
+                [float(i.price.replace('$', '').replace(',', ''))
+                 for i in product_chunk])
             print(timestamp_to_datestring(avg_time), avg_price)

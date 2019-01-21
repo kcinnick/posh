@@ -250,5 +250,6 @@ def test_strict_search():
 def test_search_over_time():
     product_search.results = []
     product_search.search_product_price_over_time(arguments=OrderedDict({
-        'query': 'new vera wang dress'}
-    ))
+        'query': 'NWT vera wang'}
+    ), strict=True)
+    assert len(product_search.results) >= 0
