@@ -83,8 +83,12 @@ class ProductSearch:
             string = string.replace('?sort_by', '&sort_by')
 
         if 'max_id' in arguments.keys():
-            string = string.replace(
-                'search?query', f'search?max_id={arguments["max_id"]}&query')
+            if 'search?query' in string:
+                string = string.replace(
+                    'search?query',
+                    f'search?max_id={arguments["max_id"]}&query')
+            else:
+                string += f'&max_id={arguments["max_id"]}"'
 
         #  Too many statements to accomplish proper string mashing.
         #  Find a way to tighten the above.
