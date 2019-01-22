@@ -6,7 +6,7 @@ from posh.product import Product
 import operator
 import requests
 import time
-
+import sys
 
 def chunks(l, n):
     """Yield successive n-sized chunks from l."""
@@ -32,6 +32,7 @@ class ProductSearch:
         self.session = requests.Session()
         self.set_headers()
         self.results = []
+        self.time_price_tuples = [] # Used in search_over_time method.
 
     def _format_argument(self, argument, value, addition):
         if argument == 'subcategory':
@@ -167,6 +168,7 @@ class ProductSearch:
                                 items=self.results, strict=strict)
             new_results_len = len(self.results)
             if not strict:
+                # Strictness check can cause real new results to not be caught.
                 if new_results_len == old_results_len:
                     return
 
@@ -183,4 +185,19 @@ class ProductSearch:
             avg_price = sum(
                 [float(i.price.replace('$', '').replace(',', ''))
                  for i in product_chunk])
-            print(timestamp_to_datestring(avg_time), avg_price)
+            self.time_price_tuples.append(
+                (timestamp_to_datestring(avg_time), avg_price)
+            )
+
+    def plot_time_price_tuples(self, arguments=None, strict=False):
+        if 'matplotlib' not in sys.modules.keys():
+            import matplotlib.pyplot as plt
+        if len(self.time_price_tuples) == 0:
+            self.search_product_price_over_time(arguments, strict)
+        plt.ylabel('Time')
+        plt.xlabel('Price')
+        plt.plot(
+            [i[0] for i in self.time_price_tuples],
+            [i[1] for i in self.time_price_tuples]  # I don't like this
+        )
+        plt.show()

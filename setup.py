@@ -12,7 +12,7 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
 requirements = ['Click>=6.0', 'requests', 'bs4', 'python-dateutil',
-                'sqlalchemy']
+                'sqlalchemy', 'matplotlib']
 
 setup_requirements = ['pytest-runner', ]
 

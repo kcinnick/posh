@@ -251,5 +251,13 @@ def test_search_over_time():
     product_search.results = []
     product_search.search_product_price_over_time(arguments=OrderedDict({
         'query': 'NWT vera wang'}
-    ), strict=True)
-    assert len(product_search.results) >= 0
+    ), strict=False)
+    assert len(product_search.results) <= 0
+
+
+def test_plot_time_price_tuples():
+    product_search.results = []
+    product_search.search_product_price_over_time(arguments=OrderedDict({
+        'query': 'NWT vera wang'}
+    ), strict=False)
+    product_search.plot_time_price_tuples()
