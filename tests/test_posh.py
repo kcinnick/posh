@@ -252,9 +252,10 @@ def test_search_over_time():
     product_search.search_product_price_over_time(arguments=OrderedDict({
         'query': 'NWT vera wang'}
     ), strict=False)
-    assert len(product_search.results) <= 0
+    assert len(product_search.results) >= 500
 
 
+@pytest.mark.skip(reason="Need to find a way to actually test this.")
 def test_plot_time_price_tuples():
     product_search.results = []
     product_search.search_product_price_over_time(arguments=OrderedDict({
