@@ -32,6 +32,7 @@ Features
 * Get images, size, brand, price, and more from products.
 * Search with as many (or few!) arguments as you want!
 * Insert product information into any database for long-term analysis
+* Easily graph historical price information for any search.
 
 TODO
 -------
@@ -61,4 +62,5 @@ Soft goals as of 1/19/2019:
 - build out method for price monitoring
 - create test associated with that
 
-The issue with creating a method that monitors price over time is maintaining connectivity over a long period of time.  There are several HTTP hiccups that can occur on any given request that are server-side in nature and thus, can't be cut off at the head within this script.  Not quite sure how I'll solve this yet but I'll update when I have a better grasp :-)
+Development taking a quick pause for now. My dev box finally passed away, new one should be here Friday.
+
