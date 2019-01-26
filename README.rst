@@ -62,5 +62,4 @@ Soft goals as of 1/19/2019:
 - build out method for price monitoring
 - create test associated with that
 
-Development taking a quick pause for now. My dev box finally passed away, new one should be here Friday.
-
+1/25/2019: Like a phoenix, a new dev box has emerged from the ashes. Development resumed!
