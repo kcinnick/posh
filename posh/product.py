@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup, FeatureNotFound
 import datetime
 from dateutil.parser import parse as date_parser
 from dateutil.relativedelta import relativedelta
-
+import os
 
 def get_past_date(str_days_ago):
     """
@@ -172,7 +172,7 @@ class Product:
         self.pictures = picture_urls
         return
 
-    def get_images(self):
+    def get_images(self, folder_path=None):
         self.images = []
         if len(self.pictures) == 0:
             self._get_pictures()
@@ -181,6 +181,10 @@ class Product:
             r = self.session.get(link)
             file_name = \
                 f'{self.title}-{self.listing_id}-{self.owner}_{index}.jpg'
+            if folder_path:
+                if not os.path.isdir(folder_path):
+                    os.mkdir(path)
+                file_name = f'{folder_path}/{file_name}'
             with open(file_name, 'wb') as f:
                 f.write(r.content)
                 self.images.append(file_name)

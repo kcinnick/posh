@@ -3,6 +3,7 @@
 
 """Tests for `posh` package."""
 import pytest
+import os
 
 from bs4 import BeautifulSoup, FeatureNotFound
 
@@ -231,10 +232,10 @@ def test_get_images():
     product = Product(url='https://poshmark.com/listing/Lularo' +
                       'e-Carly-5c2d86fcbaebf68a9b6893b0')
     product._build_product_from_url(product_search.session)
-    product.get_images()
+    product.get_images(folder_path=os.curdir)
 
-    assert product.images[0] == 'Lularoe Carly-5c2d86fcbaebf68a9b6893' + \
-        'b0-cmunger81_0.jpg'
+    assert 'Lularoe Carly-5c2d86fcbaebf68a9b6893' + \
+        'b0-cmunger81_0.jpg' in product.images[0]
 
 
 def test_strict_search():
