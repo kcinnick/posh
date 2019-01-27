@@ -14,6 +14,7 @@ from dateutil.relativedelta import relativedelta
 from random import random
 from requests import get
 
+from posh.account import Account
 from posh.product_search import ProductSearch
 from posh.product import Product, get_past_date
 
@@ -263,3 +264,10 @@ def test_plot_time_price_tuples():
         'query': 'NWT vera wang'}
     ), strict=False)
     product_search.plot_time_price_tuples()
+
+def test_account_login():
+    test_account = Account(username='ntucker12312', password='testing_for_posh')
+    assert not test_account.check_login()
+    
+    test_account.login()
+    assert test_account.check_login()
