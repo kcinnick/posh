@@ -138,7 +138,7 @@ class ProductSearch:
         try:
             soup = BeautifulSoup(r.content, 'lxml')
         except FeatureNotFound:
-            soup = BeautifulSoup(r.content)
+            soup = BeautifulSoup(r.content, 'html.parser')
 
         tiles = soup.find_all('div', class_='tile')
 

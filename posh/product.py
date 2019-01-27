@@ -132,7 +132,7 @@ class Product:
         try:
             soup = BeautifulSoup(session.get(self.url).content, 'lxml')
         except FeatureNotFound:
-            soup = BeautifulSoup(session.get(self.url).content)
+            soup = BeautifulSoup(session.get(self.url).content, 'html.parser')
         self.__soup = soup
         self._get_pictures()
 
@@ -164,7 +164,7 @@ class Product:
                     self.session.get(self.url).content, 'lxml')
             except FeatureNotFound:
                 self.__soup = BeautifulSoup(
-                    self.session.get(self.url).content)
+                    self.session.get(self.url).content, 'html.parser')
 
         pictures = self.__soup.find_all('img', attrs={'itemprop': 'image'})
         picture_urls = [i.get('data-img-src') for i in pictures if i.get(
@@ -188,3 +188,5 @@ class Product:
             with open(file_name, 'wb') as f:
                 f.write(r.content)
                 self.images.append(file_name)
+
+                
