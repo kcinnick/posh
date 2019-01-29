@@ -36,7 +36,7 @@ Features
 
 TODO
 -------
-Product price monitoring, build out purchase/watch methods, lots more :-)
+Login & buy/sell from account, build out purchase/watch methods, lots more :-)
 
 Add real docs, with usage examples and explanations of methods and functions.
 
