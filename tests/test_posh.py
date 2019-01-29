@@ -265,6 +265,7 @@ def test_plot_time_price_tuples():
     ), strict=False)
     product_search.plot_time_price_tuples()
 
+@pytest.mark.skip(reason='Not yet implemented.')
 def test_account_login():
     test_account = Account(username='ntucker12312', password='testing_for_posh')
     assert not test_account.check_login()
