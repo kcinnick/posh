@@ -16,7 +16,7 @@ posh
 
 
 
-Not-yet-fully-featured Poshmark bot/scraper/etc. (now available on pip!)
+Not-yet-totally-fully-featured Poshmark bot/scraper/etc. (now available on pip!)
 
 
 * Free software: MIT license
@@ -36,7 +36,7 @@ Features
 
 TODO
 -------
-Product price monitoring, build out purchase/watch methods, lots more :-)
+Planned was working on login, but I'm running into some issues properly authenticating.  There has to be a way to mitigate them - always is - but it's currently stumping me at the moment, hence no commits the last few days.  Today and tomorrow I'll be switching focus to other methods and then on Sunday I'll pick back up on trying to debug the login issues. :-)
 
 Add real docs, with usage examples and explanations of methods and functions.
 
