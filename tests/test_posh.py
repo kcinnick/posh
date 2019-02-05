@@ -102,7 +102,8 @@ def test_search_multiple_pages():
     # of style. (possibly occurred already?)
 
 def test_brand_search():
-    product_search.search_multiple_pages(2, arguments={
+    product_search.results = []
+    product_search.search_multiple_pages(1, arguments={
         'brand': 'rag & bone'
         })
     for result in product_search.results:
