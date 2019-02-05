@@ -101,6 +101,12 @@ def test_search_multiple_pages():
     # May need to be changed in the future if Vera Bradley goes out
     # of style. (possibly occurred already?)
 
+def test_brand_search():
+    product_search.search_multiple_pages(1, arguments={
+        'brand': 'rag & bone'
+        })
+    for result in product_search.results:
+        assert result.brand.lower() == 'rag & bone'
 
 def test_product_update():
     possible_arguments = OrderedDict({
@@ -214,7 +220,7 @@ def test_category_search():
     try:
         soup = BeautifulSoup(r.content, 'lxml')
     except FeatureNotFound:
-        soup = BeautifulSoup(r.content)
+        soup = BeautifulSoup(r.content, 'html.parser')
 
     assert soup.find_all(
         'span', attrs={'itemprop': 'name'})[1].text == 'Makeup'
@@ -265,10 +271,22 @@ def test_plot_time_price_tuples():
     ), strict=False)
     product_search.plot_time_price_tuples()
 
-@pytest.mark.skip(reason='Not yet implemented.')
+@pytest.mark.skip(reason="Not properly implemented yet.")
 def test_account_login():
     test_account = Account(username='ntucker12312', password='testing_for_posh')
     assert not test_account.check_login()
     
     test_account.login()
     assert test_account.check_login()
+
+@pytest.mark.skip(reason="Not implemented yet.")
+def test_product_like():
+    test_account = Account(username='ntucker12312', password='testing_for_posh')
+    test_account.login()
+
+    product = Product(url='https://poshmark.com/listing/Lularo' +
+                      'e-Carly-5c2d86fcbaebf68a9b6893b0')
+    product._build_product_from_url(product_search.session)
+
+    product.like(test_account)
+
