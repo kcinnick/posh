@@ -34,11 +34,10 @@ Features
 * Insert product information into any database for long-term analysis
 * Easily graph historical price information for any search.
 
-TODO
+Login
 -------
-Planned was working on login, but I'm running into some issues properly authenticating.  There has to be a way to mitigate them - always is - but it's currently stumping me at the moment, hence no commits the last few days.  Today and tomorrow I'll be switching focus to other methods and then on Sunday I'll pick back up on trying to debug the login issues. :-)
+After some time debugging, login works *occasionally* but never more than once per hour due to a reCAPTCHA call.  There would be a few ways to mitigate this (using a CAPTCHA service), but I'm undecided on if I want to take that tac with this project - especially considering I don't buy/sell on there myself, so I don't know how much automation of that stuff would be useful.  Of course there's plenty of things to automate, but that was my primary idea.
 
-Add real docs, with usage examples and explanations of methods and functions.
 
 "Why isn't X a feature"
 -------
