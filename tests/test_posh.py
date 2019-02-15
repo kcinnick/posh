@@ -81,7 +81,7 @@ def test_build_product_from_url():
     product._build_product_from_url(product_search.session)
     assert product.owner == 'cmunger81'
     assert product.brand == 'LuLaRoe'
-    assert product.price == 32.0
+    assert product.price == 28.0
     assert product.size == ['S']
 
 
