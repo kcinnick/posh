@@ -183,7 +183,7 @@ class Product:
                 f'{self.title}-{self.listing_id}-{self.owner}_{index}.jpg'
             if folder_path:
                 if not os.path.isdir(folder_path):
-                    os.mkdir(path)
+                    os.mkdir(folder_path)
                 file_name = f'{folder_path}/{file_name}'
             with open(file_name, 'wb') as f:
                 f.write(r.content)
