@@ -14,7 +14,7 @@ from dateutil.relativedelta import relativedelta
 from random import random
 from requests import get
 
-from posh.account import Account
+from posh import account
 from posh.product_search import ProductSearch
 from posh.product import Product, get_past_date
 
@@ -81,7 +81,7 @@ def test_build_product_from_url():
     product._build_product_from_url(product_search.session)
     assert product.owner == 'cmunger81'
     assert product.brand == 'LuLaRoe'
-    assert product.price == 28.0
+    assert product.price == 25.0
     assert product.size == ['S']
 
 
@@ -101,6 +101,7 @@ def test_search_multiple_pages():
     # May need to be changed in the future if Vera Bradley goes out
     # of style. (possibly occurred already?)
 
+
 def test_brand_search():
     product_search.results = []
     product_search.search_multiple_pages(1, arguments={
@@ -108,6 +109,7 @@ def test_brand_search():
         })
     for result in product_search.results:
         assert result.brand.lower() == 'rag & bone'
+
 
 def test_product_update():
     possible_arguments = OrderedDict({

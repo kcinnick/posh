@@ -137,10 +137,10 @@ class Product:
         self._get_pictures()
 
         self.owner = soup.find('div', class_='handle').text[1:]
-        self.brand = soup.find('meta', attrs={'property': 'poshmark:brand'}
-                               ).get('content')
+        self.brand = soup.find('meta', attrs={'property': 'product:brand'}
+                           ).get('content')
         self.price = float(soup.find('meta',
-                                     attrs={'property': 'poshmark:price'}
+                                     attrs={'property': 'product:price:amount'}
                                      ).get('content'))
         self.size = [i.text.strip() for i in
                      soup.find('div', class_='size-con').find_all('label')]
@@ -189,4 +189,3 @@ class Product:
                 f.write(r.content)
                 self.images.append(file_name)
 
-                
