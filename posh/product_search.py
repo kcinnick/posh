@@ -97,7 +97,12 @@ class ProductSearch:
         return string
 
     def _check_strictness(self, tile, arguments):
-        title = tile.find('h4').text.lower()
+        """
+        'Strictness' refers to whether or not the search result *must* contain
+        the string searched for in the title - results will be returned if it's
+        contained within the description as well.
+        """
+        title = tile.find('a').get('title').lower()
         for key, value in arguments.items():
             if str(value).lower() not in title:
                 return False
