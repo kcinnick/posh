@@ -17,3 +17,8 @@ History
 
 * The module is indeed functioning! Added some new functionality like a skeleton for historical searching & plotting, strict searching, lots of bug fixes, fleshed out most of the
 remaining parts of the ProductSearch and Product methods, and increased test coverage.  Also did some cleanup work moving classes and functions to specific models instead of importing from one module.  Plans for 0.1.3 include finishing out the plotting methods, separating concerns re: tests, and maybe more.
+
+0.1.2.1 (2019-07-02)
+------------------
+
+* Got some more time to work on this again.  Small version update to fix tests and update code where needed to keep up with site changes made since last updates. Re-released to PyPi.
