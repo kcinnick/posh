@@ -196,8 +196,8 @@ class Product:
         listing_id = self.url.split('-')[-1]
         product_like_url = f"https://poshmark.com/listing/{listing_id}/like"
         account.login()
-        assert account.check_login()  # Should we leave logging in up to the user's judgment? Or force a login?
+        # Should we leave logging in up to the user's judgment? Or force a login?
+        # Current approach is to force it.
         r = account.session.get(product_like_url)
-        print(r.content)
         raise NotImplementedError
 
