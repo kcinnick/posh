@@ -57,8 +57,4 @@ Development Goals
 
 As of now, my goal for this project is just to extend it out as much as makes sense by thinking of new ideas, methods, and functions that'd be useful or interesting.  Ideally, down the road this module could answer questions like "What was the average selling price of a new-with-tag Vera Wang dress over the last 6 months," which could inform you to buy one because it's relatively cheap or sell one because it's relatively expensive now compared to the average.  So, I don't really have definitive guidelines of where this will go.  That's the fun part!
 
-Soft goals as of 1/19/2019:
-- build out method for price monitoring
-- create test associated with that
-
-1/25/2019: Like a phoenix, a new dev box has emerged from the ashes. Development resumed!
+- 7/2/2019: TODO: Make login as stable as possible. Add news support.  Add parties support (maybe? it's an idea..) Add search by brand!
