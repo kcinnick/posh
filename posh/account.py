@@ -27,6 +27,11 @@ class Account:
             'login_form[password]': self.password
             })
 
+        try:
+            assert self.check_login()
+        except AssertionError:
+            print('Login failed: {}'.format(r.content))
+
     def check_login(self):
         r = self.session.get('https://poshmark.com/feed?login=true')
         if self.username in str(r.content):
