@@ -199,5 +199,8 @@ class Product:
         # Should we leave logging in up to the user's judgment? Or force a login?
         # Current approach is to force it.
         r = account.session.get(product_like_url)
-        raise NotImplementedError
+        if 'success' in str(r.content):
+            return True
+        else:
+            return False
 
