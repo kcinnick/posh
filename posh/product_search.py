@@ -8,6 +8,7 @@ import requests
 import time
 import sys
 
+
 def chunks(l, n):
     """Yield successive n-sized chunks from l."""
     for i in range(0, len(l), n):
@@ -77,6 +78,7 @@ class ProductSearch:
                 string += addition
 
         if string[21] == '-':
+            # This in particular seems sloppy
             if 'category' in arguments.keys():
                 string = string[:21] + 'category/' + string[22:]
 
@@ -203,6 +205,6 @@ class ProductSearch:
         plt.xlabel('Price')
         plt.plot(
             [i[0] for i in self.time_price_tuples],
-            [i[1] for i in self.time_price_tuples]  # I don't like this
+            [i[1] for i in self.time_price_tuples]  # I don't love this method of accessing the items in the tuples.
         )
         plt.show()

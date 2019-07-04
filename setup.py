@@ -46,6 +46,7 @@ setup(
     setup_requires=setup_requirements,
     test_suite='tests',
     tests_require=test_requirements,
+    long_description_content_type='text/markdown',
     url='https://github.com/kcinnick/posh',
     version='0.1.2.1',
     zip_safe=False,

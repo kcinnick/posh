@@ -14,7 +14,7 @@ from dateutil.relativedelta import relativedelta
 from random import random
 from requests import get
 
-from posh import account
+from posh.account import Account
 from posh.product_search import ProductSearch
 from posh.product import Product, get_past_date
 
@@ -274,7 +274,8 @@ def test_plot_time_price_tuples():
     ), strict=False)
     product_search.plot_time_price_tuples()
 
-@pytest.mark.skip(reason="Not properly implemented yet.")
+
+@pytest.mark.skip(reason="Not always working re: cloudflare issues.")
 def test_account_login():
     test_account = Account(username='ntucker12312', password='testing_for_posh')
     assert not test_account.check_login()
@@ -282,8 +283,10 @@ def test_account_login():
     test_account.login()
     assert test_account.check_login()
 
-@pytest.mark.skip(reason="Not implemented yet.")
+
 def test_product_like():
+    #  Because Poshmark uses ReCAPTCHA, this test will fail unless the user is
+    #  already logged in to the Poshmark website.
     test_account = Account(username='ntucker12312', password='testing_for_posh')
     test_account.login()
 
@@ -291,5 +294,5 @@ def test_product_like():
                       'e-Carly-5c2d86fcbaebf68a9b6893b0')
     product._build_product_from_url(product_search.session)
 
-    product.like(test_account)
+    assert product.like(test_account)
 

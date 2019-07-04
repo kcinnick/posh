@@ -4,6 +4,7 @@ from dateutil.parser import parse as date_parser
 from dateutil.relativedelta import relativedelta
 import os
 
+
 def get_past_date(str_days_ago):
     """
     Converts arbitrary "updated at" strings to proper datetimes.
@@ -133,6 +134,7 @@ class Product:
             soup = BeautifulSoup(session.get(self.url).content, 'lxml')
         except FeatureNotFound:
             soup = BeautifulSoup(session.get(self.url).content, 'html.parser')
+
         self.__soup = soup
         self._get_pictures()
 
@@ -188,4 +190,17 @@ class Product:
             with open(file_name, 'wb') as f:
                 f.write(r.content)
                 self.images.append(file_name)
+
+    def like(self, account):
+        # Like URL is internally referred to as listing_id
+        listing_id = self.url.split('-')[-1]
+        product_like_url = f"https://poshmark.com/listing/{listing_id}/like"
+        account.login()
+        # Should we leave logging in up to the user's judgment? Or force a login?
+        # Current approach is to force it.
+        r = account.session.get(product_like_url)
+        if 'success' in str(r.content):
+            return True
+        else:
+            return False
 
