@@ -284,8 +284,9 @@ def test_account_login():
     assert test_account.check_login()
 
 
-@pytest.mark.skip(reason="Not fully implemented yet.")
 def test_product_like():
+    #  Because Poshmark uses ReCAPTCHA, this test will fail unless the user is
+    #  already logged in to the Poshmark website.
     test_account = Account(username='ntucker12312', password='testing_for_posh')
     test_account.login()
 
@@ -293,5 +294,5 @@ def test_product_like():
                       'e-Carly-5c2d86fcbaebf68a9b6893b0')
     product._build_product_from_url(product_search.session)
 
-    product.like(test_account)
+    assert product.like(test_account)
 
