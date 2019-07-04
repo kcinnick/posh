@@ -2,6 +2,16 @@ from bs4 import BeautifulSoup, FeatureNotFound
 import requests
 
 
+class LoginError(AssertionError):
+    def __init__(self, message, errors):
+
+        # Call the base class constructor with the parameters it needs
+        super().__init__(message)
+
+        # Now for your custom code...
+        self.errors = errors
+
+
 class Account:
     def __init__(self, username, password, session=requests.Session()):
         self.username = username
@@ -15,7 +25,14 @@ class Account:
         except FeatureNotFound:
             soup = BeautifulSoup(r.content)
 
-        authenticity_token = soup.find('input', attrs={'name': 'authenticity_token'}).get('value')
+        try:
+            authenticity_token = soup.find('input', attrs={'name': 'authenticity_token'}).get('value')
+        except AttributeError:
+            if '"userInfo":{"dh":"%s"' % self.username in str(soup):
+                print('Logged in..\n')
+                return
+            else:
+                raise LoginError
 
         r = self.session.post(
             'https://poshmark.com/login',
@@ -29,12 +46,13 @@ class Account:
 
         try:
             assert self.check_login()
-        except AssertionError:
+        except LoginError:
             print('Login failed: {}'.format(r.content))
 
     def check_login(self):
+        # Find a cleaner way to map these if/elif blocks throughout code
         r = self.session.get('https://poshmark.com/feed?login=true')
         if self.username in str(r.content):
             return True
         else:
-            return False
+            raise LoginError(message='You aren\'t logged in.', errors='You aren\'t logged in.')
