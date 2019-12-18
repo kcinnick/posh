@@ -31,6 +31,10 @@ def get_past_date(str_days_ago):
         return date
 
     elif len(split_str) > 2:
+        if 'a minute' in split_str[2]:
+            return datetime.datetime.now() - \
+                   datetime.timedelta(minutes=1)
+
         if 'minute' in split_str[2]:
             return datetime.datetime.now() - \
                 datetime.timedelta(minutes=int(split_str[1]))
