@@ -34,8 +34,10 @@ def get_past_date(str_days_ago):
         if 'a minute' in split_str[2]:
             return datetime.datetime.now() - \
                    datetime.timedelta(minutes=1)
-
-        if 'minute' in split_str[2]:
+        elif 'seconds ago' in split_str[2]:
+            return datetime.datetime.now() - \
+                   datetime.timedelta(minutes=1)
+        elif 'minute' in split_str[2]:
             return datetime.datetime.now() - \
                 datetime.timedelta(minutes=int(split_str[1]))
 
@@ -48,6 +50,9 @@ def get_past_date(str_days_ago):
             date = today - relativedelta(days=int(split_str[1]))
             return date
 
+        elif 'seconds' in any(split_str):
+            return datetime.datetime.now() - \
+                   datetime.timedelta(minutes=1)
         else:
             return date_parser(str_days_ago[8:])
 
