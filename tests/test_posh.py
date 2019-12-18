@@ -165,11 +165,9 @@ def test_prepare_for_db_insert():
     product_search.execute_search(arguments)
 
     first_result = product_search.results[1]
-
     assert first_result.description is None
 
     first_result.update(product_search.session)
-
     assert isinstance(first_result.description, str)
 
 
@@ -275,7 +273,7 @@ def test_plot_time_price_tuples():
     product_search.plot_time_price_tuples()
 
 
-#@pytest.mark.skip(reason="Not always working re: cloudflare issues.")
+@pytest.mark.skip(reason="Not always working re: cloudflare issues.")
 def test_account_login():
     test_account = Account(username='ntucker12312', password='testing_for_posh1')
     with pytest.raises(LoginError):
@@ -284,6 +282,7 @@ def test_account_login():
     assert test_account.check_login()
 
 
+@pytest.mark.skip(reason="Not always working re: cloudflare issues.")
 def test_product_like():
     #  Because Poshmark uses ReCAPTCHA, this test will fail unless the user is
     #  already logged in to the Poshmark website.
