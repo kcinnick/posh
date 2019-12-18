@@ -50,7 +50,7 @@ def get_past_date(str_days_ago):
             date = today - relativedelta(days=int(split_str[1]))
             return date
 
-        elif 'seconds' in any(split_str):
+        if 'seconds' in str_days_ago:
             return datetime.datetime.now() - \
                    datetime.timedelta(minutes=1)
         else:
