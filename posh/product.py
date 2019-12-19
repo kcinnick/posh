@@ -38,6 +38,8 @@ def get_past_date(str_days_ago):
             return datetime.datetime.now() - \
                    datetime.timedelta(minutes=1)
         elif 'minute' in split_str[2]:
+            if split_str[1] == 'a':
+                split_str[1] = 1
             return datetime.datetime.now() - \
                 datetime.timedelta(minutes=int(split_str[1]))
 
@@ -128,7 +130,7 @@ class Product:
         self.posted_at = tile['data-created-at']
         self.owner = tile['data-creator-handle']
         self.brand = tile.get('data-post-brand')  # Not always there.
-        self.price = tile['data-post-price']
+        self.price = float(tile['data-post-price'].replace('$', '').replace(',', ''))
         self.size = tile['data-post-size']
         self.listing_id = tile['id']
         self.title = tile.find('a')['title']
