@@ -190,8 +190,7 @@ class ProductSearch:
                 datestring_to_timestamp(i.posted_at)
                 for i in product_chunk])) / max(len(product_chunk), 1)
             avg_price = sum(
-                [float(i.price.replace('$', '').replace(',', ''))
-                 for i in product_chunk])
+                [i.price for i in product_chunk])
             self.time_price_tuples.append(
                 (timestamp_to_datestring(avg_time), avg_price)
             )
