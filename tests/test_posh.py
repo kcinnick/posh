@@ -14,7 +14,7 @@ from dateutil.relativedelta import relativedelta
 from random import random
 from requests import get
 
-from posh.account import Account
+from posh.account import Account, LoginError
 from posh.product_search import ProductSearch
 from posh.product import Product, get_past_date
 
@@ -36,9 +36,6 @@ def test_build_request():
         'type': 'closet',
         'price': '26-50'
     })
-
-    possible_arguments = dict(sorted(possible_arguments.items(),
-                                     key=lambda x: random()))
 
     # Make sure that arguments are ordered correctly
     # regardless of supplied order.
@@ -165,11 +162,9 @@ def test_prepare_for_db_insert():
     product_search.execute_search(arguments)
 
     first_result = product_search.results[1]
-
     assert first_result.description is None
 
     first_result.update(product_search.session)
-
     assert isinstance(first_result.description, str)
 
 
@@ -277,17 +272,18 @@ def test_plot_time_price_tuples():
 
 @pytest.mark.skip(reason="Not always working re: cloudflare issues.")
 def test_account_login():
-    test_account = Account(username='ntucker12312', password='testing_for_posh')
-    assert not test_account.check_login()
-    
+    test_account = Account(username='ntucker12312', password='testing_for_posh1')
+    with pytest.raises(LoginError):
+        test_account.check_login()
     test_account.login()
     assert test_account.check_login()
 
 
+@pytest.mark.skip(reason="Not always working re: cloudflare issues.")
 def test_product_like():
     #  Because Poshmark uses ReCAPTCHA, this test will fail unless the user is
     #  already logged in to the Poshmark website.
-    test_account = Account(username='ntucker12312', password='testing_for_posh')
+    test_account = Account(username='ntucker12312', password='testing_for_posh1')
     test_account.login()
 
     product = Product(url='https://poshmark.com/listing/Lularo' +
