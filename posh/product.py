@@ -219,5 +219,5 @@ class Product:
         account.login()
         r = account.session.put(f"https://poshmark.com/vm-rest/users/self/shared_posts/{listing_id}",
                             {})
-        if r.content.keys() == 'req_id':
-            return True  # Successfully shared.
+        if r.json().get('req_id'):
+            return True
