@@ -203,7 +203,6 @@ class Product:
                 self.images.append(file_name)
 
     def like(self, account):
-        # Like URL is internally referred to as listing_id
         listing_id = self.url.split('-')[-1]
         product_like_url = f"https://poshmark.com/listing/{listing_id}/like"
         account.login()
@@ -215,3 +214,10 @@ class Product:
         else:
             return False
 
+    def share(self, account):
+        listing_id = self.url.split('-')[-1]
+        account.login()
+        r = account.session.put(f"https://poshmark.com/vm-rest/users/self/shared_posts/{listing_id}",
+                            {})
+        if r.content.keys() == 'req_id':
+            return True  # Successfully shared.
