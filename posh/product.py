@@ -215,9 +215,20 @@ class Product:
             return False
 
     def share(self, account):
-        listing_id = self.url.split('-')[-1]
         account.login()
-        r = account.session.put(f"https://poshmark.com/vm-rest/users/self/shared_posts/{listing_id}",
+        r = account.session.put(f"https://poshmark.com/vm-rest/users/self/shared_posts/{self.listing_id}",
                             {})
         if r.json().get('req_id'):
+            return True
+        else:
+            return False
+
+    def comment(self, account, message):
+        account.login()
+        payload = {"comment": "%s" % message}
+        r = account.session.post(f"https://poshmark.com/vm-rest/posts/{self.listing_id}/comments",
+                                 params=payload)
+        if r.json().get('error'):  # Comment successfully posted if this key is returned.
+            return False
+        else:
             return True
