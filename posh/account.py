@@ -52,11 +52,18 @@ class Account:
 
         assert self.check_login()
 
+        return
+
     def check_login(self):
-        # Find a cleaner way to map these if/elif blocks throughout code
-        r = self.session.get(f'https://poshmark.com/closet/{self.username}')
-        error_message = '\nYou aren\'t logged in.\nThe most likely culprit is a CAPTCHA. Log in on the site.\n'
-        if 'Edit Profile' in str(r.content):
+        # TODO: This is repeated code (lines 28-53 - clean that up.)
+        r = self.session.get('https://poshmark.com/login')
+        try:
+            soup = BeautifulSoup(r.content, 'lxml')
+        except FeatureNotFound:
+            soup = BeautifulSoup(r.content)
+
+        if '"userInfo":{"dh":"%s"' % self.username in str(soup):
+            print('Logged in..\n')
             return True
         else:
-            raise LoginError(message=error_message, errors=error_message)
+            raise LoginError(message='Login error', errors='Login error')
