@@ -36,7 +36,7 @@ Features
 
 Login
 ----------------------
-After some time debugging, login works *occasionally* but never more than once per hour due to a reCAPTCHA call.  There would be a few ways to mitigate this (using a CAPTCHA service), but I'm undecided on if I want to take that tac with this project - especially considering I don't buy/sell on there myself, so I don't know how much automation of that stuff would be useful.  Of course there's plenty of things to automate, but that was my primary idea.
+Login is tricky - it works for me about 80% of the time.  I've found a few things that help - signing in on the website and then using the script seems to work sometimes, but other times it'll just lock you out until you solve a CAPTCHA.  This could be mitigated by using a professional service like 2captcha, but I'd like to keep this project light and not rely on things like subscriptions, so I'd prefer the chance of login failing than having to pay to make sure it works 100%. 
 
 
 "Why isn't X a feature"
@@ -56,5 +56,3 @@ Development Goals
 ----------------------
 
 As of now, my goal for this project is just to extend it out as much as makes sense by thinking of new ideas, methods, and functions that'd be useful or interesting.  Ideally, down the road this module could answer questions like "What was the average selling price of a new-with-tag Vera Wang dress over the last 6 months," which could inform you to buy one because it's relatively cheap or sell one because it's relatively expensive now compared to the average.  So, I don't really have definitive guidelines of where this will go.  That's the fun part!
-
-- 7/2/2019: TODO: Make login as stable as possible. Add news support.  Add parties support (maybe? it's an idea..) Add search by brand!
