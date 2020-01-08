@@ -19,6 +19,12 @@ class Account:
         self.session = session
 
     def login(self):
+        try:
+            if self.check_login():
+                print('You\'re already logged in!\n')
+                return
+        except LoginError:
+            pass
         r = self.session.get('https://poshmark.com/login')
         try:
             soup = BeautifulSoup(r.content, 'lxml')
@@ -44,15 +50,13 @@ class Account:
             'login_form[password]': self.password
             })
 
-        try:
-            assert self.check_login()
-        except LoginError:
-            print('Login failed: {}'.format(r.content))
+        assert self.check_login()
 
     def check_login(self):
         # Find a cleaner way to map these if/elif blocks throughout code
-        r = self.session.get('https://poshmark.com/feed?login=true')
-        if self.username in str(r.content):
+        r = self.session.get(f'https://poshmark.com/closet/{self.username}')
+        error_message = '\nYou aren\'t logged in.\nThe most likely culprit is a CAPTCHA. Log in on the site.\n'
+        if 'Edit Profile' in str(r.content):
             return True
         else:
-            raise LoginError(message='You aren\'t logged in.', errors='You aren\'t logged in.')
+            raise LoginError(message=error_message, errors=error_message)
