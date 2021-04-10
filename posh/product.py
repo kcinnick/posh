@@ -181,7 +181,8 @@ class Product:
                     self.session.get(self.url).content, 'html.parser')
 
         pictures = self.__soup.find_all('img', class_='img__container img__container--square')
-        picture_urls = [i.get('src') for i in pictures]
+        picture_urls = [i.get('src') for i in pictures if i.get('src')]
+        picture_urls.extend([i.get('data-src') for i in pictures if i.get('data-src')])
         self.pictures = picture_urls
         return
 
