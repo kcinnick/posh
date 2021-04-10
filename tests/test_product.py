@@ -43,26 +43,6 @@ def test_get_past_date():
     assert type(get_past_date('Updated 9/27/2018')) == datetime.datetime
 
 
-def test_product_update():
-    possible_arguments = OrderedDict({
-        'brand': 'LuLaRoe',
-        'sex': 'Women',
-        'category': 'Dresses',
-        'subcategory': 'Mini',
-        'color': 'Black',
-        'size': 'M',
-        'sort': 'added_desc',
-        'type': 'closet',
-        'price': '26-50'
-    })
-    product_search.execute_search(possible_arguments)
-
-    first_result = product_search.results[0]
-    assert first_result.updated_at is None
-    first_result.update(product_search.session, built_from='tile')
-    assert isinstance(first_result.updated_at, datetime.datetime)
-
-
 def test_build_product_from_url():
     product = Product(url='https://poshmark.com/listing/NWT-Burberry-Tortoise-Glasses-6070bd7867bd91152c9affee')
     product._build_product_from_url(product_search.session)

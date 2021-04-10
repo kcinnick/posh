@@ -24,7 +24,7 @@ def get_past_date(str_days_ago):
     if 'Yesterday' in split_str:
         return datetime.datetime.now() - relativedelta(days=1)
 
-    elif len(split_str) < 2:   # Could all of this be replaced by date_parser?
+    elif len(split_str) < 2:  # Could all of this be replaced by date_parser?
         date = date_parser(str_days_ago[8:])
         return date
 
@@ -43,11 +43,11 @@ def get_past_date(str_days_ago):
             if split_str[1] == 'a':
                 split_str[1] = 1
             return datetime.datetime.now() - \
-                datetime.timedelta(minutes=int(split_str[1]))
+                   datetime.timedelta(minutes=int(split_str[1]))
 
         elif 'hour' in split_str[2]:
             date = datetime.datetime.now() - \
-                relativedelta(hours=int(split_str[1]))
+                   relativedelta(hours=int(split_str[1]))
             return date
 
         elif 'day' in split_str[2]:
@@ -104,7 +104,6 @@ class Product:
         self.comments = comments
 
     def insert_into_db(self, db_session, table_name='product'):
-        self.update(self.session)
         query = f""" \
                 INSERT INTO {table_name} (url, owner, brand, price,\
                 size, listing_id, title, pictures, description,\
@@ -121,22 +120,6 @@ class Product:
         db_session.execute(query)
         return
 
-    def _build_product_from_tile(self, tile, session):
-        """
-        Builds products from tiles, i.e. returned search results.
-        """
-
-        self.session = session  # This is lazy
-        self._built_from = 'tile'
-
-        self.posted_at = tile['data-created-at']
-        self.owner = tile['data-creator-handle']
-        self.brand = tile.get('data-post-brand')  # Not always there.
-        self.price = float(tile['data-post-price'].replace('$', '').replace(',', ''))
-        self.size = tile['data-post-size']
-        self.listing_id = tile['id']
-        self.title = tile.find('a')['title']
-
     def _build_product_from_url(self, session):
         self.session = session  # This is lazy
 
@@ -152,7 +135,9 @@ class Product:
         self._get_pictures()
 
         script = soup.find_all('script')[3]  # contains relevant information
-        json_str = str(script).replace('<script>window.__INITIAL_STATE__=', '').replace(';(function(){var s;(s=document.currentScript||document.scripts[document.scripts.length-1]).parentNode.removeChild(s);}());</script>', '')
+        json_str = str(script).replace('<script>window.__INITIAL_STATE__=', '').replace(
+            ';(function(){var s;(s=document.currentScript||document.scripts[document.scripts.length-1]).parentNode.removeChild(s);}());</script>',
+            '')
         data = json.loads(json_str)
         listing_data = data['$_listing_details']['listingDetails']
 
@@ -166,10 +151,6 @@ class Product:
         self.description = listing_data['description']
         self.colors = listing_data['colors']
         self.comments = listing_data['comments']
-
-    def update(self, session, built_from='tile'):
-        if built_from == 'tile':
-            self._build_product_from_url(session)
 
     def _get_pictures(self):
         if not self.__soup:
@@ -218,7 +199,7 @@ class Product:
     def share(self, account):
         account.login()
         r = account.session.put(f"https://poshmark.com/vm-rest/users/self/shared_posts/{self.listing_id}",
-                            {})
+                                {})
         if r.json().get('req_id'):
             return True
         else:

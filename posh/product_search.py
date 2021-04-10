@@ -60,9 +60,8 @@ class ProductSearch:
              'subcategory': '-',
              'color': '-color-',
              'sort': '?sort_by=',
-             'size': '&size%5B%5D=',
-             'type': '&condition=',
-             'price': '&price%5B%5D='
+             'size': '&size=',
+             'price': '&price='
              }
         )
         for argument, value in possible_arguments.items():
@@ -104,7 +103,7 @@ class ProductSearch:
         the string searched for in the title - results will be returned if it's
         contained within the description as well.
         """
-        title = tile.find('a').get('title').lower()
+        title = tile.find('a').find('img').get('alt')
         for key, value in arguments.items():
             if str(value).lower() not in title:
                 return False
@@ -125,8 +124,7 @@ class ProductSearch:
 
         return
 
-    def execute_search(self, arguments, page_number=None,
-                       items=None, strict=False):
+    def execute_search(self, arguments, page_number=None, strict=False):
         """
         Given a request_str, executes the associated search.
         Gathers results, turns their HTML into Product objects,
@@ -148,7 +146,9 @@ class ProductSearch:
             soup = BeautifulSoup(r.content, 'html.parser')
 
         tiles = soup.find_all('div', class_='tile')
-
+        if len(tiles) == 0:
+            print(request_str)
+            raise Exception('No results found.')
         for tile in tiles:
             strictness_pass = self._check_strictness(tile, arguments)
             if strict and strictness_pass:
@@ -163,7 +163,7 @@ class ProductSearch:
             elif not strict:
                 p = Product(
                     url=f"https://poshmark.com{tile.find('a').get('href')}")
-                p._build_product_from_tile(tile, self.session)
+                p._build_product_from_url(self.session)
                 self.results.append(p)
                 continue
         return
