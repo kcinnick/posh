@@ -12,20 +12,17 @@ product_search = ProductSearch()
 
 
 def test_get_pictures():
-    product = Product(url='https://poshmark.com/listing/Lularo' +
-                      'e-Carly-5c2d86fcbaebf68a9b6893b0')
+    product = Product(url='https://poshmark.com/listing/NWT-Burberry-Tortoise-Glasses-6070bd7867bd91152c9affee')
     product._build_product_from_url(product_search.session)
     assert len(product.pictures) == 1
 
 
 def test_get_images():
-    product = Product(url='https://poshmark.com/listing/Lularo' +
-                      'e-Carly-5c2d86fcbaebf68a9b6893b0')
+    product = Product(url='https://poshmark.com/listing/NWT-Burberry-Tortoise-Glasses-6070bd7867bd91152c9affee')
     product._build_product_from_url(product_search.session)
     product.get_images(folder_path=os.curdir)
 
-    assert 'Lularoe Carly-5c2d86fcbaebf68a9b6893' + \
-        'b0-cmunger81_0.jpg' in product.images[0]
+    assert len(product.images) > 0
 
 
 def test_get_past_date():
@@ -67,13 +64,12 @@ def test_product_update():
 
 
 def test_build_product_from_url():
-    product = Product(url='https://poshmark.com/listing/Lularo' +
-                      'e-Carly-5c2d86fcbaebf68a9b6893b0')
+    product = Product(url='https://poshmark.com/listing/NWT-Burberry-Tortoise-Glasses-6070bd7867bd91152c9affee')
     product._build_product_from_url(product_search.session)
-    assert product.owner == 'cmunger81'
-    assert product.brand == 'LuLaRoe'
-    assert product.price == 25.0
-    assert product.size == ['S']
+    assert product.owner == 'offerlover247'
+    assert product.brand == 'Burberry'
+    assert product.price == 450.0
+    assert product.size == 'OS'
 
 
 @pytest.mark.skip(reason="Need to find a way to actually test this.")

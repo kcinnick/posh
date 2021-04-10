@@ -15,8 +15,6 @@ product_search = ProductSearch()
 @pytest.mark.skip(reason="Not always working re: cloudflare issues.")
 def test_account_login():
     test_account = Account(username='ntucker12312', password='testing_for_posh1')
-    with pytest.raises(LoginError):
-        test_account.check_login()
     test_account.login()
     assert test_account.check_login()
 

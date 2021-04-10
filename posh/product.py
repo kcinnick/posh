@@ -1,3 +1,5 @@
+import json
+
 from bs4 import BeautifulSoup, FeatureNotFound
 import datetime
 from dateutil.parser import parse as date_parser
@@ -149,22 +151,21 @@ class Product:
         self.__soup = soup
         self._get_pictures()
 
-        self.owner = soup.find('div', class_='handle').text[1:]
-        self.brand = soup.find('meta', attrs={'property': 'product:brand'}
-                           ).get('content')
-        self.price = float(soup.find('meta',
-                                     attrs={'property': 'product:price:amount'}
-                                     ).get('content'))
-        self.size = [i.text.strip() for i in
-                     soup.find('div', class_='size-con').find_all('label')]
-        self.listing_id = self.url.split('-')[-1]
-        self.title = soup.find('h1', class_='title').text
-        updated_at = soup.find('span', class_='time').text
-        self.updated_at = get_past_date(updated_at)
-        self.description = soup.find('div', class_='description').text
-        self.colors = None  # Not yet implemented.
-        self.comments = soup.find(
-            'div', class_='comments')  # Not yet fully implemented.
+        script = soup.find_all('script')[3]  # contains relevant information
+        json_str = str(script).replace('<script>window.__INITIAL_STATE__=', '').replace(';(function(){var s;(s=document.currentScript||document.scripts[document.scripts.length-1]).parentNode.removeChild(s);}());</script>', '')
+        data = json.loads(json_str)
+        listing_data = data['$_listing_details']['listingDetails']
+
+        self.owner = listing_data['creator_username']
+        self.brand = listing_data['brand_obj']['canonical_name']
+        self.price = float(listing_data['price_amount']['val'])
+        self.size = listing_data['size']
+        self.listing_id = listing_data['id']
+        self.title = listing_data['title']
+        self.updated_at = listing_data['updated_at']
+        self.description = listing_data['description']
+        self.colors = listing_data['colors']
+        self.comments = listing_data['comments']
 
     def update(self, session, built_from='tile'):
         if built_from == 'tile':
