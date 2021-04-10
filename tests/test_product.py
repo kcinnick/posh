@@ -14,7 +14,7 @@ product_search = ProductSearch()
 def test_get_pictures():
     product = Product(url='https://poshmark.com/listing/NWT-Burberry-Tortoise-Glasses-6070bd7867bd91152c9affee')
     product._build_product_from_url(product_search.session)
-    assert len(product.pictures) == 1
+    assert len(product.pictures) > 1
 
 
 def test_get_images():

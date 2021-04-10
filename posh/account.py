@@ -32,13 +32,11 @@ class Account:
             soup = BeautifulSoup(r.content)
 
         try:
-            authenticity_token = soup.find('input', attrs={'name': 'authenticity_token'}).get('value')
+            authenticity_token = soup.find('meta', attrs={'id': 'csrftoken'}).get('content')
         except AttributeError:
             if '"userInfo":{"dh":"%s"' % self.username in str(soup):
                 print('Logged in..\n')
                 return
-            else:
-                raise LoginError
 
         r = self.session.post(
             'https://poshmark.com/login',
@@ -50,6 +48,7 @@ class Account:
             'login_form[password]': self.password
             })
 
+        print(r.content)
         assert self.check_login()
 
         return
@@ -65,5 +64,3 @@ class Account:
         if '"userInfo":{"dh":"%s"' % self.username in str(soup):
             print('Logged in..\n')
             return True
-        else:
-            raise LoginError(message='Login error', errors='Login error')

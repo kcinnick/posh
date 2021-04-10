@@ -180,9 +180,8 @@ class Product:
                 self.__soup = BeautifulSoup(
                     self.session.get(self.url).content, 'html.parser')
 
-        pictures = self.__soup.find_all('img', attrs={'itemprop': 'image'})
-        picture_urls = [i.get('data-img-src') for i in pictures if i.get(
-            'data-img-src')]
+        pictures = self.__soup.find_all('img', class_='img__container img__container--square')
+        picture_urls = [i.get('src') for i in pictures]
         self.pictures = picture_urls
         return
 
