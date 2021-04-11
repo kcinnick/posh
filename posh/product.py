@@ -1,3 +1,5 @@
+import json
+
 from bs4 import BeautifulSoup, FeatureNotFound
 import datetime
 from dateutil.parser import parse as date_parser
@@ -22,7 +24,7 @@ def get_past_date(str_days_ago):
     if 'Yesterday' in split_str:
         return datetime.datetime.now() - relativedelta(days=1)
 
-    elif len(split_str) < 2:   # Could all of this be replaced by date_parser?
+    elif len(split_str) < 2:  # Could all of this be replaced by date_parser?
         date = date_parser(str_days_ago[8:])
         return date
 
@@ -41,11 +43,11 @@ def get_past_date(str_days_ago):
             if split_str[1] == 'a':
                 split_str[1] = 1
             return datetime.datetime.now() - \
-                datetime.timedelta(minutes=int(split_str[1]))
+                   datetime.timedelta(minutes=int(split_str[1]))
 
         elif 'hour' in split_str[2]:
             date = datetime.datetime.now() - \
-                relativedelta(hours=int(split_str[1]))
+                   relativedelta(hours=int(split_str[1]))
             return date
 
         elif 'day' in split_str[2]:
@@ -102,7 +104,6 @@ class Product:
         self.comments = comments
 
     def insert_into_db(self, db_session, table_name='product'):
-        self.update(self.session)
         query = f""" \
                 INSERT INTO {table_name} (url, owner, brand, price,\
                 size, listing_id, title, pictures, description,\
@@ -119,22 +120,6 @@ class Product:
         db_session.execute(query)
         return
 
-    def _build_product_from_tile(self, tile, session):
-        """
-        Builds products from tiles, i.e. returned search results.
-        """
-
-        self.session = session  # This is lazy
-        self._built_from = 'tile'
-
-        self.posted_at = tile['data-created-at']
-        self.owner = tile['data-creator-handle']
-        self.brand = tile.get('data-post-brand')  # Not always there.
-        self.price = float(tile['data-post-price'].replace('$', '').replace(',', ''))
-        self.size = tile['data-post-size']
-        self.listing_id = tile['id']
-        self.title = tile.find('a')['title']
-
     def _build_product_from_url(self, session):
         self.session = session  # This is lazy
 
@@ -149,26 +134,28 @@ class Product:
         self.__soup = soup
         self._get_pictures()
 
-        self.owner = soup.find('div', class_='handle').text[1:]
-        self.brand = soup.find('meta', attrs={'property': 'product:brand'}
-                           ).get('content')
-        self.price = float(soup.find('meta',
-                                     attrs={'property': 'product:price:amount'}
-                                     ).get('content'))
-        self.size = [i.text.strip() for i in
-                     soup.find('div', class_='size-con').find_all('label')]
-        self.listing_id = self.url.split('-')[-1]
-        self.title = soup.find('h1', class_='title').text
-        updated_at = soup.find('span', class_='time').text
-        self.updated_at = get_past_date(updated_at)
-        self.description = soup.find('div', class_='description').text
-        self.colors = None  # Not yet implemented.
-        self.comments = soup.find(
-            'div', class_='comments')  # Not yet fully implemented.
+        script = soup.find_all('script')[3]  # contains relevant information
+        json_str = str(script).replace('<script>window.__INITIAL_STATE__=', '').replace(
+            ';(function(){var s;(s=document.currentScript||document.scripts['
+            'document.scripts.length-1]).parentNode.removeChild(s);}());</script>',
+            '')
+        data = json.loads(json_str)
+        listing_data = data['$_listing_details']['listingDetails']
 
-    def update(self, session, built_from='tile'):
-        if built_from == 'tile':
-            self._build_product_from_url(session)
+        self.owner = listing_data['creator_username']
+        try:
+            self.brand = listing_data['brand_obj']['canonical_name']
+        except KeyError:
+            self.brand = listing_data['brand']
+
+        self.price = float(listing_data['price_amount']['val'])
+        self.size = listing_data['size']
+        self.listing_id = listing_data['id']
+        self.title = listing_data['title']
+        self.updated_at = listing_data['updated_at']
+        self.description = listing_data['description']
+        self.colors = listing_data['colors']
+        self.comments = listing_data['comments']
 
     def _get_pictures(self):
         if not self.__soup:
@@ -179,13 +166,13 @@ class Product:
                 self.__soup = BeautifulSoup(
                     self.session.get(self.url).content, 'html.parser')
 
-        pictures = self.__soup.find_all('img', attrs={'itemprop': 'image'})
-        picture_urls = [i.get('data-img-src') for i in pictures if i.get(
-            'data-img-src')]
+        pictures = self.__soup.find_all('img', class_='img__container img__container--square')
+        picture_urls = [i.get('src') for i in pictures if i.get('src')]
+        picture_urls.extend([i.get('data-src') for i in pictures if i.get('data-src')])
         self.pictures = picture_urls
         return
 
-    def get_images(self, folder_path=None):
+    def download_pictures(self, folder_path=None):
         self.images = []
         if len(self.pictures) == 0:
             self._get_pictures()
@@ -217,7 +204,7 @@ class Product:
     def share(self, account):
         account.login()
         r = account.session.put(f"https://poshmark.com/vm-rest/users/self/shared_posts/{self.listing_id}",
-                            {})
+                                {})
         if r.json().get('req_id'):
             return True
         else:

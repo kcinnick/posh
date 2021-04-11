@@ -28,9 +28,6 @@ def test_prepare_for_db_insert():
     product_search.execute_search(arguments)
 
     first_result = product_search.results[1]
-    assert first_result.description is None
-
-    first_result.update(product_search.session)
     assert isinstance(first_result.description, str)
 
 

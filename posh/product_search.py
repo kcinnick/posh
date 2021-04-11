@@ -33,7 +33,7 @@ class ProductSearch:
         self.session = requests.Session()
         self.set_headers()
         self.results = []
-        self.time_price_tuples = [] # Used in search_over_time method.
+        self.time_price_tuples = []  # Used in search_over_time method.
 
     def _format_argument(self, argument, value, addition):
         if argument == 'subcategory':
@@ -60,9 +60,8 @@ class ProductSearch:
              'subcategory': '-',
              'color': '-color-',
              'sort': '?sort_by=',
-             'size': '&size%5B%5D=',
-             'type': '&condition=',
-             'price': '&price%5B%5D='
+             'size': '&size=',
+             'price': '&price='
              }
         )
         for argument, value in possible_arguments.items():
@@ -104,7 +103,7 @@ class ProductSearch:
         the string searched for in the title - results will be returned if it's
         contained within the description as well.
         """
-        title = tile.find('a').get('title').lower()
+        title = tile.find('a').find('img').get('alt')
         for key, value in arguments.items():
             if str(value).lower() not in title:
                 return False
@@ -125,8 +124,7 @@ class ProductSearch:
 
         return
 
-    def execute_search(self, arguments, page_number=None,
-                       items=None, strict=False):
+    def execute_search(self, arguments, page_number=None, strict=False):
         """
         Given a request_str, executes the associated search.
         Gathers results, turns their HTML into Product objects,
@@ -139,6 +137,7 @@ class ProductSearch:
                 arguments.update({'max_id': int(page_number)})
 
         request_str = self._build_request(arguments)
+        print(request_str)
 
         r = self.session.get(request_str)
 
@@ -148,7 +147,9 @@ class ProductSearch:
             soup = BeautifulSoup(r.content, 'html.parser')
 
         tiles = soup.find_all('div', class_='tile')
-
+        if len(tiles) == 0:
+            print(request_str)
+            raise Exception('No results found.')
         for tile in tiles:
             strictness_pass = self._check_strictness(tile, arguments)
             if strict and strictness_pass:
@@ -163,25 +164,27 @@ class ProductSearch:
             elif not strict:
                 p = Product(
                     url=f"https://poshmark.com{tile.find('a').get('href')}")
-                p._build_product_from_tile(tile, self.session)
+                p._build_product_from_url(self.session)
                 self.results.append(p)
                 continue
         return
 
     def search_multiple_pages(self, pages, arguments, strict=False):
         for page in range(1, pages + 1):
+            print('\nSearching page {}..'.format(page))
             old_results_len = len(self.results)
-            self.execute_search(arguments=arguments, page_number=page,
-                                items=self.results, strict=strict)
+            self.execute_search(
+                arguments=arguments, page_number=page,
+                strict=strict)
             new_results_len = len(self.results)
             if not strict:
                 # Strictness check can cause real new results to not be caught.
                 if new_results_len == old_results_len:
                     return
 
-    def search_product_price_over_time(self, arguments, strict=False):
+    def search_product_price_over_time(self, arguments, pages=3, strict=False):
         self.search_multiple_pages(
-            arguments=arguments, pages=48, strict=strict)
+            arguments=arguments, pages=pages, strict=strict)
         time_sorted_products = sorted(
             self.results, key=operator.attrgetter('posted_at'))
 
