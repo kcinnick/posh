@@ -48,6 +48,6 @@ setup(
     tests_require=test_requirements,
     long_description_content_type='text/markdown',
     url='https://github.com/kcinnick/posh',
-    version='0.2',
+    version='0.2.1',
     zip_safe=False,
 )
