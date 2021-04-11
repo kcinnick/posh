@@ -136,13 +136,18 @@ class Product:
 
         script = soup.find_all('script')[3]  # contains relevant information
         json_str = str(script).replace('<script>window.__INITIAL_STATE__=', '').replace(
-            ';(function(){var s;(s=document.currentScript||document.scripts[document.scripts.length-1]).parentNode.removeChild(s);}());</script>',
+            ';(function(){var s;(s=document.currentScript||document.scripts['
+            'document.scripts.length-1]).parentNode.removeChild(s);}());</script>',
             '')
         data = json.loads(json_str)
         listing_data = data['$_listing_details']['listingDetails']
 
         self.owner = listing_data['creator_username']
-        self.brand = listing_data['brand_obj']['canonical_name']
+        try:
+            self.brand = listing_data['brand_obj']['canonical_name']
+        except KeyError:
+            self.brand = listing_data['brand']
+
         self.price = float(listing_data['price_amount']['val'])
         self.size = listing_data['size']
         self.listing_id = listing_data['id']
@@ -167,7 +172,7 @@ class Product:
         self.pictures = picture_urls
         return
 
-    def get_images(self, folder_path=None):
+    def download_pictures(self, folder_path=None):
         self.images = []
         if len(self.pictures) == 0:
             self._get_pictures()

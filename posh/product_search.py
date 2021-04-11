@@ -33,7 +33,7 @@ class ProductSearch:
         self.session = requests.Session()
         self.set_headers()
         self.results = []
-        self.time_price_tuples = [] # Used in search_over_time method.
+        self.time_price_tuples = []  # Used in search_over_time method.
 
     def _format_argument(self, argument, value, addition):
         if argument == 'subcategory':
@@ -137,6 +137,7 @@ class ProductSearch:
                 arguments.update({'max_id': int(page_number)})
 
         request_str = self._build_request(arguments)
+        print(request_str)
 
         r = self.session.get(request_str)
 
@@ -170,18 +171,20 @@ class ProductSearch:
 
     def search_multiple_pages(self, pages, arguments, strict=False):
         for page in range(1, pages + 1):
+            print('\nSearching page {}..'.format(page))
             old_results_len = len(self.results)
-            self.execute_search(arguments=arguments, page_number=page,
-                                items=self.results, strict=strict)
+            self.execute_search(
+                arguments=arguments, page_number=page,
+                strict=strict)
             new_results_len = len(self.results)
             if not strict:
                 # Strictness check can cause real new results to not be caught.
                 if new_results_len == old_results_len:
                     return
 
-    def search_product_price_over_time(self, arguments, strict=False):
+    def search_product_price_over_time(self, arguments, pages=3, strict=False):
         self.search_multiple_pages(
-            arguments=arguments, pages=48, strict=strict)
+            arguments=arguments, pages=pages, strict=strict)
         time_sorted_products = sorted(
             self.results, key=operator.attrgetter('posted_at'))
 
