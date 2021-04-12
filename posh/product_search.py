@@ -1,12 +1,12 @@
-from bs4 import BeautifulSoup, FeatureNotFound
-from collections import OrderedDict
-import datetime
-from dateutil.relativedelta import relativedelta
-from posh.product import Product
 import operator
-import requests
-import time
 import sys
+import time
+from collections import OrderedDict
+
+import requests
+from bs4 import BeautifulSoup, FeatureNotFound
+
+from posh.product import Product
 
 
 def chunks(l, n):
@@ -15,8 +15,8 @@ def chunks(l, n):
         yield l[i:i + n]
 
 
-def datestring_to_timestamp(str):
-    return time.mktime(time.strptime(str, "%Y-%m-%d %H:%M:%S %z"))
+def datestring_to_timestamp(datestring):
+    return time.mktime(time.strptime(datestring, "%Y-%m-%d %H:%M:%S %z"))
 
 
 def timestamp_to_datestring(timestamp):
@@ -36,12 +36,11 @@ class ProductSearch:
         self.time_price_tuples = []  # Used in search_over_time method.
 
     def _format_argument(self, argument, value, addition):
-        if argument == 'subcategory':
-            addition = addition.replace(' ', '_')
-        elif argument == 'brand':
+        if argument in ['subcategory', 'brand']:
             addition = addition.replace(' ', '_')
         elif argument == 'query':
             addition = addition.replace(' ', '+')
+
         return addition
 
     def _build_request(self, arguments: dict):
@@ -150,6 +149,7 @@ class ProductSearch:
         if len(tiles) == 0:
             print(request_str)
             raise Exception('No results found.')
+
         for tile in tiles:
             strictness_pass = self._check_strictness(tile, arguments)
             if strict and strictness_pass:
