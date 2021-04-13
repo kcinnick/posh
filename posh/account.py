@@ -31,7 +31,8 @@ class Account:
             soup = BeautifulSoup(r.content)
 
         try:
-            authenticity_token = soup.find('meta', attrs={'id': 'csrftoken'}).get('content')
+            authenticity_token = soup.find(
+                'meta', attrs={'id': 'csrftoken'}).get('content')
         except AttributeError:
             if '"userInfo":{"dh":"%s"' % self.username in str(soup):
                 print('Logged in..\n')
