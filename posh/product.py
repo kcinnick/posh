@@ -43,7 +43,7 @@ def get_past_date(str_days_ago):
             if split_str[1] == 'a':
                 split_str[1] = 1
             return datetime.datetime.now() - \
-                   datetime.timedelta(minutes=int(split_str[1]))
+                datetime.timedelta(minutes=int(split_str[1]))
 
         elif 'hour' in split_str[2]:
             date = datetime.datetime.now() - \
@@ -135,9 +135,11 @@ class Product:
         self._get_pictures()
 
         script = soup.find_all('script')[3]  # contains relevant information
-        json_str = str(script).replace('<script>window.__INITIAL_STATE__=', '').replace(
+        json_str = str(script).replace(
+            '<script>window.__INITIAL_STATE__=', '').replace(
             ';(function(){var s;(s=document.currentScript||document.scripts['
-            'document.scripts.length-1]).parentNode.removeChild(s);}());</script>',
+            'document.scripts.length-1]).parentNode.removeChild(s);}());</sc'
+            'ript>',
             '')
         data = json.loads(json_str)
         listing_data = data['$_listing_details']['listingDetails']
@@ -166,9 +168,11 @@ class Product:
                 self.__soup = BeautifulSoup(
                     self.session.get(self.url).content, 'html.parser')
 
-        pictures = self.__soup.find_all('img', class_='img__container img__container--square')
+        pictures = self.__soup.find_all(
+            'img', class_='img__container img__container--square')
         picture_urls = [i.get('src') for i in pictures if i.get('src')]
-        picture_urls.extend([i.get('data-src') for i in pictures if i.get('data-src')])
+        picture_urls.extend(
+            [i.get('data-src') for i in pictures if i.get('data-src')])
         self.pictures = picture_urls
         return
 
@@ -193,7 +197,8 @@ class Product:
         listing_id = self.url.split('-')[-1]
         product_like_url = f"https://poshmark.com/listing/{listing_id}/like"
         account.login()
-        # Should we leave logging in up to the user's judgment? Or force a login?
+        # Should we leave logging in up to the user's judgment?
+        # Or force a login?
         # Current approach is to force it.
         r = account.session.get(product_like_url)
         if 'success' in str(r.content):
@@ -203,8 +208,11 @@ class Product:
 
     def share(self, account):
         account.login()
-        r = account.session.put(f"https://poshmark.com/vm-rest/users/self/shared_posts/{self.listing_id}",
-                                {})
+        r = account.session.put(
+            f"https://poshmark.com/vm-rest/users/self/"
+            + "shared_posts/{self.listing_id}",
+            {}
+        )
         if r.json().get('req_id'):
             return True
         else:
@@ -213,9 +221,12 @@ class Product:
     def comment(self, account, message):
         account.login()
         payload = {"comment": "%s" % message}
-        r = account.session.post(f"https://poshmark.com/vm-rest/posts/{self.listing_id}/comments",
-                                 params=payload)
-        if r.json().get('error'):  # Comment successfully posted if this key is returned.
+        r = account.session.post(
+            f"https://poshmark.com/vm-rest/posts/{self.listing_id}/comments",
+            params=payload
+        )
+        if r.json().get('error'):
+            # Comment successfully posted if this key is returned.
             return False
         else:
             return True
