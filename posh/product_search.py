@@ -156,7 +156,7 @@ class ProductSearch:
                 #  There needs to be a better way to do this.
                 p = Product(
                     url=f"https://poshmark.com{tile.find('a').get('href')}")
-                p._build_product_from_tile(tile, self.session)
+                p._build_product_from_url(self.session)
                 self.results.append(p)
                 continue
             elif strict and not strictness_pass:
