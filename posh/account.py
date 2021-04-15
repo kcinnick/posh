@@ -4,7 +4,6 @@ import requests
 
 class LoginError(AssertionError):
     def __init__(self, message, errors):
-
         # Call the base class constructor with the parameters it needs
         super().__init__(message)
 
@@ -32,7 +31,8 @@ class Account:
             soup = BeautifulSoup(r.content)
 
         try:
-            authenticity_token = soup.find('meta', attrs={'id': 'csrftoken'}).get('content')
+            authenticity_token = soup.find(
+                'meta', attrs={'id': 'csrftoken'}).get('content')
         except AttributeError:
             if '"userInfo":{"dh":"%s"' % self.username in str(soup):
                 print('Logged in..\n')
@@ -41,11 +41,11 @@ class Account:
         r = self.session.post(
             'https://poshmark.com/login',
             params={
-            'utf8': '✓',
-            'authenticity_token': authenticity_token,
-            'login_form[iobb]': None,
-            'login_form[username_email]': self.username,
-            'login_form[password]': self.password
+                'utf8': '✓',
+                'authenticity_token': authenticity_token,
+                'login_form[iobb]': None,
+                'login_form[username_email]': self.username,
+                'login_form[password]': self.password
             })
 
         print(r.content)
