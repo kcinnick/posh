@@ -20,7 +20,7 @@ def test_get_pictures():
 def test_download_pictures():
     product = Product(url='https://poshmark.com/listing/NWT-Burberry-Tortoise-Glasses-6070bd7867bd91152c9affee')
     product._build_product_from_url(product_search.session)
-    product.download_pictures(folder_path=os.curdir)
+    product.download_pictures(folder_path=os.curdir + '/test_pictures')
 
     assert len(product.images) > 0
 
@@ -46,7 +46,7 @@ def test_get_past_date():
 def test_build_product_from_url():
     product = Product(url='https://poshmark.com/listing/NWT-Burberry-Tortoise-Glasses-6070bd7867bd91152c9affee')
     product._build_product_from_url(product_search.session)
-    assert product.owner == 'offerlover247'
+    assert product.owner == 'prettychristys'
     assert product.brand == 'Burberry'
     assert product.price == 450.0
     assert product.size == 'OS'

@@ -172,12 +172,13 @@ class Product:
                 self.__soup = BeautifulSoup(
                     self.session.get(self.url).content, 'html.parser')
 
-        pictures = self.__soup.find_all(
-            'img', class_='img__container img__container--square')
-        picture_urls = [i.get('src') for i in pictures if i.get('src')]
-        picture_urls.extend(
-            [i.get('data-src') for i in pictures if i.get('data-src')])
+        pictures_container = self.__soup.find(
+            'div', class_='listing__layout-grid listing__layout-item listing__image'
+        )
+        pictures = pictures_container.find_all('source')
+        picture_urls = [i.get('srcset') for i in pictures if i.get('srcset')]
         self.pictures = picture_urls
+
         return
 
     def download_pictures(self, folder_path=None):
