@@ -89,7 +89,7 @@ class ProductSearch:
                     'search?query',
                     f'search?max_id={arguments["max_id"]}&query')
             else:
-                string += f'&max_id={arguments["max_id"]}"'
+                string += f'&max_id={arguments["max_id"]}'
 
         #  Too many statements to accomplish proper string mashing.
         #  Find a way to tighten the above.
@@ -136,7 +136,6 @@ class ProductSearch:
                 arguments.update({'max_id': int(page_number)})
 
         request_str = self._build_request(arguments)
-        print(request_str)
 
         r = self.session.get(request_str)
 
@@ -145,28 +144,23 @@ class ProductSearch:
         except FeatureNotFound:
             soup = BeautifulSoup(r.content, 'html.parser')
 
-        tiles = soup.find_all('div', class_='tile')
+        tile_container = soup.find('div', class_='tiles_container m--t--1')
+        tiles = tile_container.find_all(attrs={'data-et-name': 'listing'})
         if len(tiles) == 0:
             print(request_str)
             raise Exception('No results found.')
 
         for tile in tiles:
-            strictness_pass = self._check_strictness(tile, arguments)
-            if strict and strictness_pass:
-                #  There needs to be a better way to do this.
-                p = Product(
-                    url=f"https://poshmark.com{tile.find('a').get('href')}")
-                p._build_product_from_url(self.session)
-                self.results.append(p)
+            if not tile.find('a'):
                 continue
-            elif strict and not strictness_pass:
-                continue
-            elif not strict:
-                p = Product(
-                    url=f"https://poshmark.com{tile.find('a').get('href')}")
-                p._build_product_from_url(self.session)
-                self.results.append(p)
-                continue
+            if strict:
+                if not self._check_strictness(tile, arguments):
+                    continue
+            product_link = 'https://poshmark.com' + tile.find('a').get('href')
+            product = Product(url=product_link)
+            product._build_product_from_url(self.session)
+            self.results.append(product)
+
         return
 
     def search_multiple_pages(self, pages, arguments, strict=False):
