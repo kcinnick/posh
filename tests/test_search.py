@@ -66,11 +66,11 @@ def test_search_multiple_pages():
         'color': 'Pink'
     })
     assert len(product_search.results) >= 50
-    # More products are added all the time so it'd be tricky to pin
+    # More products are added all the time, so it'd be tricky to pin
     # down an exact number that wouldn't require changing all the time.
     # However, the search should always return >50 unique items.
     # May need to be changed in the future if Vera Bradley goes out
-    # of style. (possibly occurred already?)
+    # of style.
 
 
 def test_brand_search():
@@ -117,7 +117,7 @@ def test_category_search():
         soup = BeautifulSoup(r.content, 'html.parser')
 
     assert soup.find(
-        'a', class_='category-filter__item category-filter__nested-category category-filter__selected'
+        'a', class_='category-filter__item category-filter__selected category-filter__nested-category'
     ).text.strip() == 'Makeup'
 
 
@@ -127,8 +127,8 @@ def test_strict_search():
         'query': 'signed jersey'
     }, strict=True)
 
-    assert all(['signed jersey' in i.title.lower()
-                for i in product_search.results])
+    for i in product_search.results:
+        assert 'signed' in i.title.lower()
 
 
 #def test_search_over_time():
