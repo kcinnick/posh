@@ -134,13 +134,17 @@ class Product:
         self.__soup = soup
         self._get_pictures()
 
-        script = soup.find_all('script')[3]  # contains relevant information
-        json_str = str(script).replace(
-            '<script>window.__INITIAL_STATE__=', '').replace(
-            ';(function(){var s;(s=document.currentScript||document.scripts['
-            'document.scripts.length-1]).parentNode.removeChild(s);}());</sc'
-            'ript>',
-            '')
+        scripts = soup.find_all('script')  # contains relevant information
+        for script in scripts:
+            if 'window.__INITIAL_STATE__' in str(script):
+                json_str = str(script).replace(
+                    '<script>window.__INITIAL_STATE__=', '').replace(
+                    ';(function(){var s;(s=document.currentScript||document.scripts['
+                    'document.scripts.length-1]).parentNode.removeChild(s);}());</sc'
+                    'ript>',
+                    '')
+                break
+
         data = json.loads(json_str)
         listing_data = data['$_listing_details']['listingDetails']
 
